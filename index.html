@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" style="background:#0a1628">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MindMetric IQ — Know Your Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* Fallback in case Google Fonts fails */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap');
+</style>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 
@@ -28,7 +34,7 @@
 
 body{
 font-family:‘Inter’,sans-serif;
-background:var(–blue);
+background:#0a1628 !important;
 color:var(–white);
 min-height:100vh;
 overflow-x:hidden;
@@ -94,7 +100,8 @@ font-family:‘Bebas Neue’,sans-serif;
 font-size:clamp(3.5rem,9vw,6.5rem);
 line-height:.95;
 letter-spacing:.04em;
-color:var(–white);
+color:#ffffff !important;
+text-shadow:0 2px 10px rgba(0,0,0,.5);
 margin-bottom:16px;
 }
 .hero-h1 .red{color:var(–red)}
@@ -670,17 +677,18 @@ max-width:600px;margin:0 auto 16px;
 
 /* Disclaimer banner on landing */
 .disclaimer-bar{
-background:rgba(220,31,31,.07);
-border:1px solid rgba(220,31,31,.15);
-border-radius:8px;
-padding:10px 16px;
-font-size:.74rem;
-color:var(–grey2);
-line-height:1.6;
-margin-bottom:24px;
-text-align:left;
+background:transparent;
+border:none;
+border-radius:0;
+padding:6px 4px;
+font-size:.68rem;
+color:var(–grey3);
+line-height:1.5;
+margin-bottom:16px;
+text-align:center;
+opacity:0.6;
 }
-.disclaimer-bar strong{color:var(–grey)}
+.disclaimer-bar strong{color:var(–grey3);font-weight:400}
 
 /* Modal */
 .modal-overlay{
@@ -756,10 +764,6 @@ color:var(–grey2);font-size:1.4rem;cursor:pointer;
       <div class="pr-item"><div class="pr-check">✓</div>Where you rank globally</div>
     </div>
   </div>
-</div>
-
-<div class="disclaimer-bar">
-  <strong>For entertainment purposes only.</strong> This test is not a clinically validated IQ assessment and should not be used for medical, educational, or professional decisions. Results are approximate and intended for personal interest only.
 </div>
 
 <div class="cta-wrap">
@@ -1186,13 +1190,14 @@ document.querySelectorAll('.modal-overlay').forEach(el=>{
 <!-- FOOTER -->
 
 <footer class="site-footer">
+  <div class="disclaimer-bar">For entertainment purposes only. Not a clinically validated IQ assessment.</div>
   <div class="footer-logo">SCORE<span>MYIQ</span></div>
   <div class="footer-tagline">Cognitive Intelligence Assessment · For Entertainment Purposes Only</div>
   <div class="footer-links">
     <a href="#" onclick="openModal('terms');return false;">Terms of Service</a>
     <a href="#" onclick="openModal('privacy');return false;">Privacy Policy</a>
     <a href="#" onclick="openModal('disclaimer');return false;">Disclaimer</a>
-    <a href="mailto:support@scoremyiq.com">Contact Us</a>
+    <a href="/cdn-cgi/l/email-protection#96e5e3e6e6f9e4e2d6e5f5f9e4f3fbefffe7b8f5f9fb">Contact Us</a>
   </div>
   <div class="footer-legal">
     This test is provided for entertainment and educational purposes only. It is not a clinically validated psychometric assessment and does not constitute medical, psychological, or professional advice. Results should not be used to make any important life decisions.
@@ -1222,7 +1227,7 @@ document.querySelectorAll('.modal-overlay').forEach(el=>{
     <h3>7. Changes to Terms</h3>
     <p>We reserve the right to update these terms at any time. Continued use of the service constitutes acceptance of updated terms.</p>
     <h3>8. Contact</h3>
-    <p>Questions? Email us at support@scoremyiq.com</p>
+    <p>Questions? Email us at <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5b282e2b2b34292f1b283834293e3622322a75383436">[email&#160;protected]</a></p>
   </div>
 </div>
 
@@ -1246,7 +1251,7 @@ document.querySelectorAll('.modal-overlay').forEach(el=>{
     <h3>6. Children's Privacy</h3>
     <p>This service is not directed at children under 13. We do not knowingly collect information from children.</p>
     <h3>7. Contact</h3>
-    <p>For privacy questions email: support@scoremyiq.com</p>
+    <p>For privacy questions email: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="41323431312e33350132222e33242c3828306f222e2c">[email&#160;protected]</a></p>
   </div>
 </div>
 
@@ -1261,11 +1266,4 @@ document.querySelectorAll('.modal-overlay').forEach(el=>{
     <h3>No Professional Advice</h3>
     <p>Results from this test should not be interpreted as a professional assessment of your intelligence, cognitive ability, or mental health. Do not use these results in any professional, medical, legal, or educational context.</p>
     <h3>Score Accuracy</h3>
-    <p>Your score is an estimate based on your performance on 20 questions. Actual IQ can only be measured through comprehensive testing administered by a qualified psychologist. Scores on this test may not reflect your true cognitive abilities.</p>
-    <h3>Results May Vary</h3>
-    <p>Performance can be affected by factors including fatigue, stress, familiarity with puzzle types, and device/browser conditions. We make no guarantees about the accuracy or consistency of results.</p>
-  </div>
-</div>
-
-</body>
-</html>
+    <p>Your score is an estimate based on your performance on 20 questions. Actual IQ can only be measured through comprehensive testing administered by a qualified psychologist. Scores on this test may not reflect your true cog
