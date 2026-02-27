@@ -951,15 +951,33 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
 (function(){
   const params = new URLSearchParams(window.location.search);
   if(params.get('paid') === '1'){
-    const savedAnswers = sessionStorage.getItem('iqAnswers');
-    const savedTimings = sessionStorage.getItem('iqTimings');
+    // Try localStorage first, fallback to sessionStorage
+    const savedAnswers = localStorage.getItem('iqAnswers') || sessionStorage.getItem('iqAnswers');
+    const savedTimings = localStorage.getItem('iqTimings') || sessionStorage.getItem('iqTimings');
     if(savedAnswers){
       answers = JSON.parse(savedAnswers);
       timings = JSON.parse(savedTimings) || new Array(20).fill(0);
+      localStorage.removeItem('iqAnswers');
+      localStorage.removeItem('iqTimings');
       sessionStorage.removeItem('iqAnswers');
       sessionStorage.removeItem('iqTimings');
       // Show results after short delay so page loads first
       window.addEventListener('DOMContentLoaded', ()=> setTimeout(showResults, 300));
+    } else {
+      // Answers lost - show friendly message
+      window.addEventListener('DOMContentLoaded', ()=>{
+        setTimeout(()=>{
+          document.getElementById('screen-landing').innerHTML = `
+            <div style="padding:60px 24px;text-align:center;color:#ffffff">
+              <div style="font-size:3rem;margin-bottom:16px">✅</div>
+              <h2 style="font-family:'Bebas Neue',sans-serif;font-size:2rem;margin-bottom:12px">Payment Successful!</h2>
+              <p style="color:#8899bb;margin-bottom:24px">Thank you for your purchase. Unfortunately your session expired during payment.</p>
+              <p style="color:#8899bb;margin-bottom:32px">Please retake the test — your payment is confirmed and results are free this time.</p>
+              <button onclick="location.href='https://scoremyiq.com'" style="background:#dc1f1f;color:#fff;border:none;padding:16px 32px;border-radius:8px;font-size:1rem;cursor:pointer">Retake Test Free →</button>
+            </div>`;
+          document.getElementById('screen-landing').classList.add('active');
+        }, 300);
+      });
     }
   }
 })();
