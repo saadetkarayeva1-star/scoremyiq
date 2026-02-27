@@ -378,20 +378,33 @@ width:22px;
 }
 .opt.selected{border-color:#ffffff;background:rgba(255,255,255,.07)}
 .opt.selected .opt-l{color:#ffffff}
-.review-list{display:flex;flex-direction:column;gap:10px}
-.review-item{background:#0a1628;border:1px solid #162d5e;border-radius:10px;padding:14px 16px;border-left:4px solid #162d5e}
+.review-list{display:flex;flex-direction:column;gap:14px}
+.review-item{background:#0f2044;border:1px solid #162d5e;border-radius:12px;overflow:hidden;border-left:5px solid #162d5e}
 .review-item.correct{border-left-color:#22c55e}
 .review-item.wrong{border-left-color:#ef4444}
 .review-item.skipped{border-left-color:#4a5c80}
-.ri-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px}
-.ri-q{font-size:.82rem;font-weight:600;color:#ffffff;line-height:1.45;flex:1}
-.ri-badge{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;padding:3px 10px;border-radius:4px;white-space:nowrap;flex-shrink:0}
-.ri-badge.c{background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.25)}
-.ri-badge.w{background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.25)}
+.ri-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(0,0,0,.2)}
+.ri-qnum{font-family:‘Bebas Neue’,‘Arial Black’,sans-serif;font-size:1rem;color:#8899bb;letter-spacing:.06em}
+.ri-badge{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;padding:4px 12px;border-radius:20px;white-space:nowrap}
+.ri-badge.c{background:rgba(34,197,94,.15);color:#22c55e;border:1px solid rgba(34,197,94,.3)}
+.ri-badge.w{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.3)}
 .ri-badge.s{background:rgba(74,92,128,.2);color:#8899bb;border:1px solid #162d5e}
-.ri-row{font-size:.76rem;display:flex;align-items:center;gap:7px;margin-bottom:3px}
-.ri-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.ri-exp{font-size:.74rem;color:#8899bb;line-height:1.5;padding-top:8px;border-top:1px solid #162d5e;margin-top:6px}
+.ri-body{padding:14px 16px}
+.ri-q{font-size:.88rem;font-weight:700;color:#ffffff;line-height:1.5;margin-bottom:12px}
+.ri-options{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.ri-opt{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;font-size:.78rem;border:1px solid transparent}
+.ri-opt.opt-correct{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:#22c55e}
+.ri-opt.opt-wrong{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.2);color:#ef4444}
+.ri-opt.opt-neutral{background:rgba(255,255,255,.03);border-color:#162d5e;color:#8899bb}
+.ri-opt-letter{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.7rem;flex-shrink:0}
+.opt-correct .ri-opt-letter{background:#22c55e;color:#000}
+.opt-wrong .ri-opt-letter{background:#ef4444;color:#fff}
+.opt-neutral .ri-opt-letter{background:#162d5e;color:#8899bb}
+.ri-opt-icon{margin-left:auto;font-size:.85rem}
+.ri-exp-box{background:rgba(255,255,255,.04);border:1px solid #162d5e;border-radius:8px;padding:10px 12px}
+.ri-exp-label{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#8899bb;margin-bottom:4px}
+.ri-exp-text{font-size:.78rem;color:#c8d4e8;line-height:1.6}
+.ri-category{font-size:.65rem;color:#4a5c80;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
 
 .next-btn{
 display:none;width:100%;margin-top:16px;
@@ -1170,11 +1183,39 @@ function buildReview(){
     const skipped=chosen===null;
     const isCorrect=!skipped&&chosen===q.ans;
     const cls=skipped?'skipped':isCorrect?'correct':'wrong';
-    const badge=skipped?'<span class="ri-badge s">Skipped</span>':isCorrect?'<span class="ri-badge c">Correct</span>':'<span class="ri-badge w">Wrong</span>';
-    h+=`<div class="review-item ${cls}"><div class="ri-top"><div class="ri-q">Q${i+1}. ${q.text}</div>${badge}</div>`;
-    if(!skipped&&!isCorrect)h+=`<div class="ri-row"><div class="ri-dot" style="background:#ef4444"></div><span style="color:#ef4444">Your answer: ${L[chosen]} — ${q.opts[chosen]}</span></div>`;
-    if(!isCorrect)h+=`<div class="ri-row"><div class="ri-dot" style="background:#22c55e"></div><span style="color:#22c55e">Correct: ${L[q.ans]} — ${q.opts[q.ans]}</span></div>`;
-    h+=`<div class="ri-exp">${q.exp}</div></div>`;
+    const badgeTxt=skipped?'⊘ Skipped':isCorrect?'✓ Correct':'✗ Wrong';
+    const badgeCls=skipped?'s':isCorrect?'c':'w';
+    
+    // Header
+    h+=`<div class="review-item ${cls}">`;
+    h+=`<div class="ri-header"><span class="ri-qnum">Question ${i+1} of ${Qs.length}</span><span class="ri-badge ${badgeCls}">${badgeTxt}</span></div>`;
+    
+    // Body
+    h+=`<div class="ri-body">`;
+    if(q.cat)h+=`<div class="ri-category">${q.cat}</div>`;
+    h+=`<div class="ri-q">${q.text}</div>`;
+    
+    // All 4 options
+    h+=`<div class="ri-options">`;
+    q.opts.forEach((opt,j)=>{
+      let optCls='opt-neutral', icon='';
+      if(j===q.ans){ optCls='opt-correct'; icon='✓'; }
+      else if(!skipped && j===chosen){ optCls='opt-wrong'; icon='✗'; }
+      h+=`<div class="ri-opt ${optCls}">
+        <div class="ri-opt-letter">${L[j]}</div>
+        <span>${opt}</span>
+        ${icon?`<span class="ri-opt-icon">${icon}</span>`:''}
+      </div>`;
+    });
+    h+=`</div>`;
+    
+    // Explanation box
+    h+=`<div class="ri-exp-box">
+      <div class="ri-exp-label">💡 Explanation</div>
+      <div class="ri-exp-text">${q.exp}</div>
+    </div>`;
+    
+    h+=`</div></div>`;
   });
   const el=document.getElementById('reviewList');
   if(el)el.innerHTML=h;
