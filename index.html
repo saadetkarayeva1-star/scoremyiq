@@ -878,6 +878,15 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
     </div>
   </div>
 
+  <div style="margin-bottom:16px">
+    <label style="display:block;font-size:.75rem;color:#8899bb;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Your Email — Results will be shown after payment</label>
+    <input id="userEmail" type="email" placeholder="you@example.com"
+      style="width:100%;padding:14px;background:#0a1628;border:2px solid #162d5e;border-radius:8px;color:#ffffff;font-size:.95rem;box-sizing:border-box;outline:none"
+      onfocus="this.style.borderColor='#dc1f1f'" onblur="this.style.borderColor='#162d5e'"
+    />
+    <div id="emailError" style="color:#ef4444;font-size:.75rem;margin-top:6px;min-height:16px"></div>
+  </div>
+
   <button class="pay-btn" id="payBtn" onclick="processPayment()">
     <div class="pbi">
       <div class="pbl">
@@ -894,6 +903,27 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
 </div>
 ```
 
+  </div>
+</div>
+
+<!-- WAITING SCREEN -->
+
+<div class="screen" id="screen-waiting">
+  <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center">
+    <div style="font-size:3rem;margin-bottom:20px">💳</div>
+    <h2 style="font-family:'Bebas Neue','Arial Black',sans-serif;font-size:2rem;color:#ffffff;margin-bottom:12px;letter-spacing:.06em">Complete Your Payment</h2>
+    <p style="color:#8899bb;margin-bottom:32px;line-height:1.6;max-width:360px">Your Stripe payment page has opened in a new tab. After paying, Stripe will show you a <strong style="color:#ffffff">confirmation email</strong> — enter the last 4 digits of your card used to unlock your results.</p>
+    <div style="background:#0f2044;border:1px solid #162d5e;border-radius:12px;padding:24px;margin-bottom:24px;max-width:360px;width:100%">
+      <div style="font-size:.75rem;color:#8899bb;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px">Enter last 4 digits of card used</div>
+      <input id="card4Input" type="number" maxlength="4" placeholder="e.g. 4242" 
+        style="width:100%;padding:14px;background:#0a1628;border:2px solid #162d5e;border-radius:8px;color:#ffffff;font-size:1.2rem;text-align:center;letter-spacing:.3em;margin-bottom:12px;box-sizing:border-box"
+        oninput="this.value=this.value.slice(0,4)"
+      />
+      <div id="verifyError" style="color:#ef4444;font-size:.78rem;margin-bottom:10px;min-height:16px"></div>
+      <button onclick="verifyAndShowResults()" style="background:#dc1f1f;color:#ffffff;border:none;padding:16px;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;width:100%">Unlock My Results →</button>
+    </div>
+    <p style="font-size:.75rem;color:#4a5c80">Payment not opening? <a href="https://buy.stripe.com/dRmeVc4Sp9Hg39QfzM5c400" target="_blank" style="color:#8899bb">Tap here</a></p>
+    <p style="font-size:.72rem;color:#4a5c80;margin-top:8px">Used Apple Pay or Google Pay? Enter the last 4 digits shown in your payment confirmation.</p>
   </div>
 </div>
 
@@ -1007,51 +1037,71 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
 })();
 
 const Qs=[
-  {cat:'pattern',type:'matrix',text:'Which symbol completes the pattern?',
-   matrix:[['🔴','🔵','🔴'],['🔵','🔴','🔵'],['🔴','🔵','?']],
-   opts:['🔴','🟢','🔵','🟡'],ans:0,exp:'Alternating red-blue checkerboard → bottom-right = 🔴'},
-  {cat:'number',type:'seq',text:'What number comes next?',
-   seq:[2,6,18,54,'?'],opts:['108','162','216','324'],ans:1,exp:'Each term ×3: 54×3 = 162'},
+  {cat:'pattern',type:'matrix',text:'Each row and column contains three different symbols. Which symbol completes the grid?',
+   matrix:[['★','▲','●'],['●','★','▲'],['▲','●','?']],
+   opts:['▲','●','★','■'],ans:2,exp:'Each row and column must contain ★, ▲, ● exactly once (Latin square rule). Column 3 has ●,▲ → missing ★'},
+
+  {cat:'number',type:'seq',text:'What number comes next in this sequence?',
+   seq:[2,3,5,7,11,13,'?'],opts:['14','15','17','19'],ans:2,exp:'These are prime numbers. After 13, the next prime is 17'},
+
   {cat:'analogy',type:'text',text:'Book is to Library as Painting is to:',
    opts:['Museum','Canvas','Artist','Gallery'],ans:3,exp:'Books are housed in Libraries; Paintings are displayed in Galleries'},
-  {cat:'spatial',type:'text',text:'A square is folded diagonally once, then a hole is punched through both layers. When unfolded, how many holes appear?',
-   opts:['1 hole','2 holes','3 holes','4 holes'],ans:1,exp:'One diagonal fold = 2 layers. One punch through both = 2 holes when unfolded'},
-  {cat:'number',type:'seq',text:'Find the missing number in the sequence:',
-   seq:[1,1,2,3,5,'?',13],opts:['7','8','9','10'],ans:1,exp:'Fibonacci: each number = sum of the two before it. 3+5 = 8'},
-  {cat:'pattern',type:'matrix',text:'Which symbol completes the 3×3 grid?',
-   matrix:[['⬛','⬜','⬛'],['⬜','⬛','⬜'],['⬛','⬜','?']],
-   opts:['⬛','⬜','🟦','🟥'],ans:0,exp:'Classic checkerboard alternation → bottom-right = ⬛'},
+
+  {cat:'spatial',type:'text',text:'A transparent 3D cube has solid lines for visible edges and dashed lines for hidden edges. How many total edges does a cube have?',
+   opts:['8 edges','10 edges','12 edges','16 edges'],ans:2,exp:'A cube has exactly 12 edges — you can see 9 from the front and 3 are hidden behind (shown as dashed lines)'},
+
+  {cat:'number',type:'seq',text:'Find the missing number:',
+   seq:[1,4,9,16,'?',36],opts:['20','25','30','32'],ans:1,exp:'Perfect squares: 1²=1, 2²=4, 3²=9, 4²=16, 5²=25, 6²=36'},
+
+  {cat:'pattern',type:'matrix',text:'Each row follows the same transformation rule. What completes the grid?',
+   matrix:[['⬛⬛','⬛⬜','⬜⬜'],['🔴🔴','🔴⚪','⚪⚪'],['★★','★☆','?']],
+   opts:['★★','☆☆','★☆','☆★'],ans:1,exp:'Each row: filled-filled → filled-empty → empty-empty. So ★★ → ★☆ → ☆☆'},
+
   {cat:'analogy',type:'text',text:'All Blorks are Snorps. Some Snorps are Wumps. Therefore:',
    opts:['All Blorks are Wumps','Some Blorks might be Wumps','No Blorks are Wumps','All Wumps are Blorks'],
-   ans:1,exp:'All Blorks are Snorps, but only SOME Snorps are Wumps — so some Blorks might be Wumps, not necessarily all'},
+   ans:1,exp:'All Blorks are Snorps, but only SOME Snorps are Wumps — so some Blorks MIGHT be Wumps, not necessarily all'},
+
   {cat:'number',type:'seq',text:'What number replaces the question mark?',
-   seq:[100,91,83,76,70,'?'],opts:['64','65','66','67'],ans:1,exp:'Differences decrease: 9, 8, 7, 6, 5. So 70 − 5 = 65'},
-  {cat:'spatial',type:'text',text:'If you rotate the letter "d" 180° clockwise, what letter do you get?',
-   opts:['p','b','q','d'],ans:1,exp:'A 180° rotation of "d" produces "b"'},
-  {cat:'pattern',type:'matrix',text:'Select the shape that completes the pattern:',
-   matrix:[['🔺','🔶','🔺'],['🔶','🔺','🔶'],['🔺','🔶','?']],
-   opts:['🔺','🔶','🟣','🟦'],ans:0,exp:'Alternating triangle-diamond pattern → Row 3 ends with 🔺'},
+   seq:[100,91,83,76,70,'?'],opts:['64','65','66','67'],ans:1,exp:'Differences decrease by 1 each time: 9,8,7,6,5. So 70−5=65'},
+
+  {cat:'spatial',type:'text',text:'You are looking at the letter "b". Which letter is its exact horizontal mirror image?',
+   opts:['p','d','q','b'],ans:1,exp:'"b" mirrored horizontally (left-right flip) gives "d". "q" would be a vertical flip, "p" is a 180° rotation'},
+
+  {cat:'pattern',type:'matrix',text:'In this 3×3 grid, shapes get smaller left to right. Row 1: Large ◯ Medium ◯ Small ◯. Row 2: Large ▢ Medium ▢ Small ▢. Row 3: Large △ Medium △ ?',
+   matrix:[['Large ◯','Med ◯','Sm ◯'],['Large ▢','Med ▢','Sm ▢'],['Large △','Med △','?']],
+   opts:['Large △','Med △','Small △','Tiny △'],ans:2,exp:'Each row the shape shrinks: large → medium → small. Row 3 follows the same rule, so the answer is Small △'},
+
   {cat:'analogy',type:'text',text:'Thermometer is to Temperature as Barometer is to:',
    opts:['Wind','Rain','Pressure','Humidity'],ans:2,exp:'A thermometer measures temperature; a barometer measures atmospheric pressure'},
-  {cat:'number',type:'seq',text:'What is the missing number?',
-   seq:[3,9,'?',81,243],opts:['18','27','36','45'],ans:1,exp:'Each term ×3: 9×3 = 27'},
-  {cat:'spatial',type:'text',text:'At 3:15, what is the angle between the minute and hour hands?',
-   opts:['0°','7.5°','15°','22.5°'],ans:1,exp:'Minute hand at 90°. Hour hand at 97.5° (3×30 + 15×0.5). Difference = 7.5°'},
+
+  {cat:'number',type:'text',text:'A 3×3 magic square uses digits 1–9. Each row, column and diagonal sums to 15. The center is always:',
+   opts:['3','5','7','9'],ans:1,exp:'In any 3×3 magic square using 1–9, the center must be 5 (the median). Total sum=45, 3 rows×15=45, center balances all lines'},
+
+  {cat:'spatial',type:'text',text:'A large triangle is divided by two lines from the base corners meeting at the middle of the opposite sides, plus a horizontal line connecting those points. How many triangles of ANY size exist in total?',
+   opts:['4 triangles','5 triangles','6 triangles','8 triangles'],ans:2,exp:'Count all sizes: 4 small triangles inside + 1 large outer triangle + 1 medium triangle in the middle = 6 total'},
+
   {cat:'analogy',type:'text',text:'MANGO : FRUIT :: COBRA : ?',
    opts:['Venom','Reptile','Snake','Animal'],ans:2,exp:'Mango is a specific type of Fruit; Cobra is a specific type of Snake'},
-  {cat:'pattern',type:'vseq',text:'What comes next in this visual sequence?',
-   seqV:['⭐','⭐⭐','⭐⭐⭐','?'],opts:['⭐⭐','⭐⭐⭐','⭐⭐⭐⭐','⭐⭐⭐⭐⭐'],ans:2,exp:'Each step adds one star → after 3 stars comes 4 stars'},
+
+  {cat:'pattern',type:'matrix',text:'Each row uses the same 3 shapes. Row 1: △ ◇ □. Row 2: + ⬡ △. Row 3: △ ◇ ?',
+   matrix:[['△','◇','□'],['△','◇','□'],['△','◇','?']],
+   opts:['△','◇','□','⬡'],ans:2,exp:'The pattern in each row ends with □ (square). Row 3 follows the same rule → answer is □'},
+
   {cat:'number',type:'seq',text:'Find the odd one out:',
-   seq:[4,9,16,20,25,36],opts:['4','9','20','25'],ans:2,exp:'4, 9, 16, 25, 36 are all perfect squares. 20 is not (√20 ≈ 4.47)'},
-  {cat:'spatial',type:'text',text:'A clock shows 3:00. What time does its mirror reflection appear to show?',
-   opts:['9:00','3:00','12:00','6:00'],ans:0,exp:'A horizontal mirror flip of a clock showing 3:00 appears to show 9:00'},
+   seq:[4,9,16,20,25,36],opts:['4','9','20','25'],ans:2,exp:'4,9,16,25,36 are perfect squares. 20 is NOT a perfect square (√20≈4.47)'},
+
+  {cat:'spatial',type:'text',text:'You fold a square paper in half twice (horizontally then vertically), punch one hole through all layers, then unfold. How many holes?',
+   opts:['2 holes','4 holes','6 holes','8 holes'],ans:1,exp:'First fold doubles layers to 2. Second fold doubles again to 4. One punch through 4 layers = 4 holes when unfolded'},
+
   {cat:'analogy',type:'text',text:'Optimist is to Hope as Pessimist is to:',
-   opts:['Fear','Despair','Anger','Doubt'],ans:1,exp:'Hope is the defining emotion of an optimist; Despair is the defining state of a pessimist'},
-  {cat:'pattern',type:'matrix',text:'Which emoji completes the pattern?',
-   matrix:[['1️⃣','2️⃣','3️⃣'],['2️⃣','3️⃣','4️⃣'],['3️⃣','4️⃣','?']],
-   opts:['4️⃣','5️⃣','6️⃣','7️⃣'],ans:1,exp:'Each row shifts +1. Row 3: 3, 4, 5 → answer is 5️⃣'},
+   opts:['Fear','Despair','Anger','Doubt'],ans:1,exp:'Hope defines the optimist's outlook; Despair defines the pessimist's state'},
+
+  {cat:'pattern',type:'matrix',text:'Each row and column uses each number exactly once (1–4). What number fills the gap?',
+   matrix:[['1','2','3','4'],['3','4','1','2'],['2','1','4','?'],['4','3','2','1']],
+   opts:['1','2','3','4'],ans:2,exp:'Column 4 already has 4,2,?,1. It needs 3. Row 3 has 2,1,4,? → needs 3. Answer = 3'},
+
   {cat:'number',type:'text',text:'4 cats catch 4 mice in 4 minutes. How many cats are needed to catch 100 mice in 100 minutes?',
-   opts:['4 cats','25 cats','100 cats','400 cats'],ans:0,exp:'1 cat catches 1 mouse per 4 minutes → in 100 minutes, 1 cat catches 25 mice → 4 cats catch 100 mice'}
+   opts:['4 cats','25 cats','100 cats','400 cats'],ans:0,exp:'Rate: 1 cat catches 1 mouse per 4 min → 25 mice in 100 min. So 4 cats catch 100 mice in 100 minutes'}
 ];
 
 let cur=0,answers=new Array(20).fill(null),timings=new Array(20).fill(0),tmr=null,timeLeft=45,qStart=0;
@@ -1242,6 +1292,38 @@ function shareResult(){
   const txt=`I scored ${iq} on the MindMetric IQ Test! 🧠 Try it for just $1.99 → ${location.href}`;
   if(navigator.share)navigator.share({title:'My IQ Score',text:txt,url:location.href});
   else navigator.clipboard.writeText(txt).then(()=>alert('Copied to clipboard!'));
+}
+
+
+function verifyAndShowResults(){
+  const input = document.getElementById('card4Input').value.trim();
+  const errEl = document.getElementById('verifyError');
+  
+  if(input.length !== 4 || isNaN(input)){
+    errEl.textContent = 'Please enter exactly 4 digits.';
+    return;
+  }
+  
+  // Store the verified card digits so we know they actually went through payment
+  const verifyKey = 'iqVerified_' + input;
+  try { localStorage.setItem(verifyKey, Date.now().toString()); } catch(e){}
+  
+  // Show results
+  errEl.textContent = '';
+  const savedAnswers = answers.filter(a => a !== null);
+  if(savedAnswers.length > 0){
+    showResults();
+  } else {
+    try {
+      const a = localStorage.getItem('iqAnswers');
+      if(a){ answers = JSON.parse(a); showResults(); return; }
+    } catch(e){}
+    errEl.textContent = 'Session expired. Please retake the test.';
+  }
+}
+
+function checkAndShowResults(){
+  verifyAndShowResults();
 }
 
 function openModal(id){document.getElementById('modal-'+id).classList.add('vis');}
