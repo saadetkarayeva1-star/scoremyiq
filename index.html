@@ -994,44 +994,32 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
 (function(){
   const params = new URLSearchParams(window.location.search);
   if(params.get('paid') === '1'){
-    // Try URL params first (most reliable)
-    const aParam = params.get('a');
-    const tParam = params.get('t');
+    // Try to restore answers from localStorage/sessionStorage
+    let a = null;
+    try { a = localStorage.getItem('iqA'); } catch(e){}
+    if(!a){ try { a = sessionStorage.getItem('iqA'); } catch(e){} }
     
-    if(aParam){
-      answers = aParam.split(',').map(x => x === 'n' ? null : parseInt(x));
-      timings = tParam ? tParam.split(',').map(x => parseInt(x)||0) : new Array(20).fill(0);
-      window.addEventListener('DOMContentLoaded', ()=> setTimeout(showResults, 300));
+    if(a && a.length === 20){
+      // Decode compact answer string
+      answers = a.split('').map(x => x === 'n' ? null : parseInt(x));
+      timings = new Array(20).fill(15); // default timings
+      try { localStorage.removeItem('iqA'); sessionStorage.removeItem('iqA'); } catch(e){}
+      window.addEventListener('DOMContentLoaded', ()=> setTimeout(showResults, 400));
     } else {
-      // Fallback: try localStorage
-      try {
-        const savedAnswers = localStorage.getItem('iqAnswers');
-        const savedTimings = localStorage.getItem('iqTimings');
-        if(savedAnswers){
-          answers = JSON.parse(savedAnswers);
-          timings = JSON.parse(savedTimings) || new Array(20).fill(0);
-          localStorage.removeItem('iqAnswers');
-          localStorage.removeItem('iqTimings');
-          window.addEventListener('DOMContentLoaded', ()=> setTimeout(showResults, 300));
-        } else {
-          // Nothing found - show retake message
-          window.addEventListener('DOMContentLoaded', ()=>{
-            setTimeout(()=>{
-              document.getElementById('screen-landing').innerHTML = `
-                <div style="padding:60px 24px;text-align:center;color:#ffffff;max-width:480px;margin:0 auto">
-                  <div style="font-size:3rem;margin-bottom:16px">✅</div>
-                  <h2 style="font-family:'Bebas Neue','Arial Black',sans-serif;font-size:2rem;margin-bottom:12px;color:#ffffff">Payment Successful!</h2>
-                  <p style="color:#8899bb;margin-bottom:24px;line-height:1.6">Thank you for your purchase! Your session expired while redirecting from payment.</p>
-                  <p style="color:#8899bb;margin-bottom:32px;line-height:1.6">Please retake the test — it's completely free for you this time and your results will appear immediately.</p>
-                  <button onclick="location.href='https://scoremyiq.com'" style="background:#dc1f1f;color:#fff;border:none;padding:16px 32px;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;width:100%;max-width:280px">Retake Test Free →</button>
-                </div>`;
-              document.getElementById('screen-landing').classList.add('active');
-            }, 300);
-          });
-        }
-      } catch(e) {
-        window.addEventListener('DOMContentLoaded', ()=> setTimeout(()=>{ location.href='https://scoremyiq.com'; }, 500));
-      }
+      // Answers not found - show retake screen
+      window.addEventListener('DOMContentLoaded', ()=>{
+        setTimeout(()=>{
+          const el = document.getElementById('screen-landing');
+          el.innerHTML = '<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;background:#0a1628">'
+            + '<div style="font-size:3.5rem;margin-bottom:20px">✅</div>'
+            + '<h2 style="font-family:Bebas Neue,Arial Black,sans-serif;font-size:2.5rem;color:#ffffff;margin-bottom:12px;letter-spacing:.04em">Payment Confirmed!</h2>'
+            + '<p style="color:#8899bb;margin-bottom:12px;line-height:1.7;max-width:400px">Your $1.99 payment was successful. However, your test session expired during the Stripe redirect.</p>'
+            + '<p style="color:#8899bb;margin-bottom:32px;line-height:1.7;max-width:400px">Please retake the test — this time your results will show instantly for free.</p>'
+            + '<button onclick="window.location.href='https://scoremyiq.com'" style="background:#dc1f1f;color:#fff;border:none;padding:18px 40px;border-radius:8px;font-size:1.05rem;font-weight:700;cursor:pointer;letter-spacing:.02em">Retake Test Free →</button>'
+            + '</div>';
+          el.classList.add('active');
+        }, 300);
+      });
     }
   }
 })();
