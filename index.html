@@ -1215,8 +1215,19 @@ function processPayment(){
     return;
   }
   if(emailErr)emailErr.textContent='';
+  // Store email globally so confirmPaid() can use it
+  window._iqEmail=email;
+  // Open Stripe in new tab - THIS page stays alive with answers in memory
+  window.open('https://buy.stripe.com/dRmeVc4Sp9Hg39QfzM5c400','_blank');
+  // Show the payment confirmation overlay
+  document.getElementById('pay-overlay').style.display='flex';
+}
 
-  // Calculate score while answers in memory
+function confirmPaid(){
+  document.getElementById('pay-overlay').style.display='none';
+  const email=window._iqEmail||'';
+
+  // Calculate results - answers still in memory!
   const correct=answers.filter((a,i)=>a===Qs[i].ans).length;
   const iq=Math.round(70+(correct/20)*75);
   const cats={pattern:[],number:[],analogy:[],spatial:[]};
@@ -1235,32 +1246,27 @@ function processPayment(){
     }
   });
 
-  const data={email,iq,pct,p:cp('pattern'),n:cp('number'),s:cp('spatial'),a:cp('analogy'),wrong:wrong||'Perfect score!'};
+  // Show thank you screen
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-thankyou').classList.add('active');
+  const el=document.getElementById('thankyou-email');
+  if(el)el.textContent=email||'your inbox';
 
-  document.getElementById('loaderEl').classList.add('vis');
-
-  // Save to JSONBin
-  fetch('https://api.jsonbin.io/v3/b',{
-    method:'POST',
-    headers:{
-      'Content-Type':'application/json',
-      'X-Master-Key':'$2a$10$Z/Cp1eTSwUBc1M6S8brgT.dJmIMx9MVlwY.cl5QowgM7PGD6yIfj.',
-      'X-Access-Key':'$2a$10$9rL1KFiTc9PHJ.o9XNVloOL4BArLUbCyPUTma2Q3m6pNkwaPloHDO',
-      'X-Bin-Name':'iq-'+Date.now()
-    },
-    body:JSON.stringify(data)
-  })
-  .then(r=>r.json())
-  .then(r=>{
-    const binId=r.metadata.id;
-    // Redirect to Stripe with bin ID in the client_reference_id
-    try{sessionStorage.setItem('iqBinId',binId);localStorage.setItem('iqBinId',binId);}catch(e){}
-    window.location.href='https://buy.stripe.com/dRmeVc4Sp9Hg39QfzM5c400?client_reference_id='+binId;
-  })
-  .catch(()=>{
-    // Fallback redirect without bin ID
-    window.location.href='https://buy.stripe.com/dRmeVc4Sp9Hg39QfzM5c400';
-  });
+  // Send email NOW - answers still in memory
+  if(email){
+    emailjs.send('service_xnj2aij','template_hd7n09e',{
+      email:email,
+      to_name:email.split('@')[0],
+      iq_score:iq,
+      percentile:pct,
+      pattern_score:cp('pattern'),
+      number_score:cp('number'),
+      spatial_score:cp('spatial'),
+      analogy_score:cp('analogy'),
+      wrong_answers:wrong||'Perfect score!'
+    }).then(()=>console.log('Email sent!'))
+      .catch(e=>console.error('EmailJS error:',e));
+  }
 }
 
 
