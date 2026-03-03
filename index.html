@@ -921,7 +921,7 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
     <p style="color:#8899bb;margin-bottom:32px;line-height:1.7;max-width:400px;font-size:.9rem">Check your email for your full IQ score, category breakdown, and explanations for every wrong answer.</p>
     <div style="background:#0f2044;border:1px solid #162d5e;border-radius:12px;padding:20px 28px;margin-bottom:32px;max-width:380px;width:100%">
       <div style="font-size:.75rem;color:#8899bb;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Check your inbox at</div>
-      <div style="font-size:1rem;color:#ffffff;font-weight:700">📧 The email you provided</div>
+      <div style="font-size:1rem;color:#ffffff;font-weight:700">📧 <span id="thankyou-email">your inbox</span></div>
       <div style="font-size:.75rem;color:#4a5c80;margin-top:8px">Check spam folder if not received within 2 minutes</div>
     </div>
     <button onclick="location.href='https://scoremyiq.com'" style="background:#dc1f1f;color:#fff;border:none;padding:16px 40px;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;letter-spacing:.02em">Take Test Again →</button>
@@ -1007,14 +1007,51 @@ emailjs.init('k_Guda54uTldI2JdD');
 
 // Check if returning from Stripe payment
 (function(){
-  if(new URLSearchParams(window.location.search).get('paid')==='1'){
-    window.addEventListener('DOMContentLoaded',()=>{
-      setTimeout(()=>{
-        document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-        document.getElementById('screen-thankyou').classList.add('active');
-      },300);
-    });
-  }
+  if(new URLSearchParams(window.location.search).get('paid')!=='1') return;
+  window.addEventListener('DOMContentLoaded',()=>{
+    setTimeout(()=>{
+      // Show thank you screen immediately
+      document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+      document.getElementById('screen-thankyou').classList.add('active');
+
+      // Get bin ID from storage
+      let binId=null;
+      try{binId=sessionStorage.getItem('iqBinId');}catch(e){}
+      if(!binId){try{binId=localStorage.getItem('iqBinId');}catch(e){}}
+
+      if(binId){
+        // Fetch results from JSONBin and send email
+        fetch('https://api.jsonbin.io/v3/b/'+binId+'/latest',{
+          headers:{
+            'X-Master-Key':'$2a$10$Z/Cp1eTSwUBc1M6S8brgT.dJmIMx9MVlwY.cl5QowgM7PGD6yIfj.',
+            'X-Access-Key':'$2a$10$9rL1KFiTc9PHJ.o9XNVloOL4BArLUbCyPUTma2Q3m6pNkwaPloHDO'
+          }
+        })
+        .then(r=>r.json())
+        .then(r=>{
+          const d=r.record;
+          const el=document.getElementById('thankyou-email');
+          if(el)el.textContent=d.email;
+          // Send email with results
+          emailjs.send('service_xnj2aij','template_hd7n09e',{
+            email:d.email,
+            to_name:d.email.split('@')[0],
+            iq_score:d.iq,
+            percentile:d.pct,
+            pattern_score:d.p,
+            number_score:d.n,
+            spatial_score:d.s,
+            analogy_score:d.a,
+            wrong_answers:d.wrong
+          }).then(()=>{
+            console.log('Email sent!');
+            try{sessionStorage.removeItem('iqBinId');localStorage.removeItem('iqBinId');}catch(e){}
+          }).catch(e=>console.error('Email error:',e));
+        })
+        .catch(e=>console.error('JSONBin fetch error:',e));
+      }
+    },300);
+  });
 })();
 
 const Qs=[
@@ -1175,14 +1212,14 @@ function processPayment(){
   }
   if(emailErr)emailErr.textContent='';
 
-  // Calculate results while answers are in memory
-  const L=['A','B','C','D'];
+  // Calculate score while answers in memory
   const correct=answers.filter((a,i)=>a===Qs[i].ans).length;
   const iq=Math.round(70+(correct/20)*75);
-  const pct=iq>=130?'Top 2%':iq>=120?'Top 9%':iq>=110?'Top 25%':iq>=100?'Top 50%':'Below average';
   const cats={pattern:[],number:[],analogy:[],spatial:[]};
   Qs.forEach((q,i)=>cats[q.cat].push(answers[i]===q.ans?1:0));
   const cp=cat=>cats[cat].length?Math.round(cats[cat].reduce((a,b)=>a+b,0)/cats[cat].length*100):0;
+  const pct=iq>=130?'Top 2%':iq>=120?'Top 9%':iq>=110?'Top 25%':'Top 50%';
+  const L=['A','B','C','D'];
   let wrong='';
   Qs.forEach((q,i)=>{
     const ch=answers[i];
@@ -1194,22 +1231,38 @@ function processPayment(){
     }
   });
 
-  // Send email via EmailJS NOW before leaving page
-  emailjs.send('service_xnj2aij','template_hd7n09e',{
-    email:email,
-    to_name:email.split('@')[0],
-    iq_score:iq,
-    percentile:pct,
-    pattern_score:cp('pattern'),
-    number_score:cp('number'),
-    spatial_score:cp('spatial'),
-    analogy_score:cp('analogy'),
-    wrong_answers:wrong||'Perfect score! No wrong answers.'
-  }).then(()=>console.log('Email sent')).catch(e=>console.error(e));
+  const data={email,iq,pct,p:cp('pattern'),n:cp('number'),s:cp('spatial'),a:cp('analogy'),wrong:wrong||'Perfect score!'};
 
-  // Redirect to Stripe - success URL is scoremyiq.com?paid=1
+  // Show loading
+  const btn=document.getElementById('payBtn');
+  if(btn){btn.disabled=true;}
   document.getElementById('loaderEl').classList.add('vis');
-  setTimeout(()=>{window.location.href='https://buy.stripe.com/dRmeVc4Sp9Hg39QfzM5c400';},600);
+
+  // Save to JSONBin (survives page redirect)
+  fetch('https://api.jsonbin.io/v3/b',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'X-Master-Key':'$2a$10$Z/Cp1eTSwUBc1M6S8brgT.dJmIMx9MVlwY.cl5QowgM7PGD6yIfj.',
+      'X-Access-Key':'$2a$10$9rL1KFiTc9PHJ.o9XNVloOL4BArLUbCyPUTma2Q3m6pNkwaPloHDO',
+      'X-Bin-Name':email
+    },
+    body:JSON.stringify(data)
+  })
+  .then(r=>r.json())
+  .then(r=>{
+    const binId=r.metadata.id;
+    // Save bin ID to both storages as backup
+    try{sessionStorage.setItem('iqBinId',binId);}catch(e){}
+    try{localStorage.setItem('iqBinId',binId);}catch(e){}
+    // Redirect to Stripe with bin ID in success URL
+    window.location.href='https://buy.stripe.com/dRmeVc4Sp9Hg39QfzM5c400';
+  })
+  .catch(err=>{
+    console.error('JSONBin error:',err);
+    // Fallback - redirect anyway
+    window.location.href='https://buy.stripe.com/dRmeVc4Sp9Hg39QfzM5c400';
+  });
 }
 
 
