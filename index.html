@@ -1007,10 +1007,10 @@ emailjs.init('k_Guda54uTldI2JdD');
 
 // Check if returning from Stripe payment
 (function(){
-  if(new URLSearchParams(window.location.search).get('paid')!=='1') return;
+  const params=new URLSearchParams(window.location.search);
+  if(params.get('paid')!=='1') return;
   window.addEventListener('DOMContentLoaded',()=>{
     setTimeout(()=>{
-      // Show thank you screen immediately
       document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
       document.getElementById('screen-thankyou').classList.add('active');
 
@@ -1019,38 +1019,42 @@ emailjs.init('k_Guda54uTldI2JdD');
       try{binId=sessionStorage.getItem('iqBinId');}catch(e){}
       if(!binId){try{binId=localStorage.getItem('iqBinId');}catch(e){}}
 
-      if(binId){
-        // Fetch results from JSONBin and send email
-        fetch('https://api.jsonbin.io/v3/b/'+binId+'/latest',{
-          headers:{
-            'X-Master-Key':'$2a$10$Z/Cp1eTSwUBc1M6S8brgT.dJmIMx9MVlwY.cl5QowgM7PGD6yIfj.',
-            'X-Access-Key':'$2a$10$9rL1KFiTc9PHJ.o9XNVloOL4BArLUbCyPUTma2Q3m6pNkwaPloHDO'
-          }
-        })
-        .then(r=>r.json())
-        .then(r=>{
-          const d=r.record;
-          const el=document.getElementById('thankyou-email');
-          if(el)el.textContent=d.email;
-          // Send email with results
-          emailjs.send('service_xnj2aij','template_hd7n09e',{
-            email:d.email,
-            to_name:d.email.split('@')[0],
-            iq_score:d.iq,
-            percentile:d.pct,
-            pattern_score:d.p,
-            number_score:d.n,
-            spatial_score:d.s,
-            analogy_score:d.a,
-            wrong_answers:d.wrong
-          }).then(()=>{
-            console.log('Email sent!');
-            try{sessionStorage.removeItem('iqBinId');localStorage.removeItem('iqBinId');}catch(e){}
-          }).catch(e=>console.error('Email error:',e));
-        })
-        .catch(e=>console.error('JSONBin fetch error:',e));
+      if(!binId){
+        console.log('No bin ID found - cannot send email');
+        return;
       }
-    },300);
+
+      // Fetch from JSONBin and send email
+      fetch('https://api.jsonbin.io/v3/b/'+binId+'/latest',{
+        headers:{
+          'X-Master-Key':'$2a$10$Z/Cp1eTSwUBc1M6S8brgT.dJmIMx9MVlwY.cl5QowgM7PGD6yIfj.',
+          'X-Access-Key':'$2a$10$9rL1KFiTc9PHJ.o9XNVloOL4BArLUbCyPUTma2Q3m6pNkwaPloHDO'
+        }
+      })
+      .then(r=>r.json())
+      .then(r=>{
+        const d=r.record;
+        const el=document.getElementById('thankyou-email');
+        if(el) el.textContent=d.email;
+
+        return emailjs.send('service_xnj2aij','template_hd7n09e',{
+          email:d.email,
+          to_name:d.email.split('@')[0],
+          iq_score:d.iq,
+          percentile:d.pct,
+          pattern_score:d.p,
+          number_score:d.n,
+          spatial_score:d.s,
+          analogy_score:d.a,
+          wrong_answers:d.wrong
+        });
+      })
+      .then(()=>{
+        console.log('Email sent successfully!');
+        try{sessionStorage.removeItem('iqBinId');localStorage.removeItem('iqBinId');}catch(e){}
+      })
+      .catch(e=>console.error('Error:',e));
+    },500);
   });
 })();
 
@@ -1233,34 +1237,28 @@ function processPayment(){
 
   const data={email,iq,pct,p:cp('pattern'),n:cp('number'),s:cp('spatial'),a:cp('analogy'),wrong:wrong||'Perfect score!'};
 
-  // Show loading
-  const btn=document.getElementById('payBtn');
-  if(btn){btn.disabled=true;}
   document.getElementById('loaderEl').classList.add('vis');
 
-  // Save to JSONBin (survives page redirect)
+  // Save to JSONBin
   fetch('https://api.jsonbin.io/v3/b',{
     method:'POST',
     headers:{
       'Content-Type':'application/json',
       'X-Master-Key':'$2a$10$Z/Cp1eTSwUBc1M6S8brgT.dJmIMx9MVlwY.cl5QowgM7PGD6yIfj.',
       'X-Access-Key':'$2a$10$9rL1KFiTc9PHJ.o9XNVloOL4BArLUbCyPUTma2Q3m6pNkwaPloHDO',
-      'X-Bin-Name':email
+      'X-Bin-Name':'iq-'+Date.now()
     },
     body:JSON.stringify(data)
   })
   .then(r=>r.json())
   .then(r=>{
     const binId=r.metadata.id;
-    // Save bin ID to both storages as backup
-    try{sessionStorage.setItem('iqBinId',binId);}catch(e){}
-    try{localStorage.setItem('iqBinId',binId);}catch(e){}
-    // Redirect to Stripe with bin ID in success URL
-    window.location.href='https://buy.stripe.com/dRmeVc4Sp9Hg39QfzM5c400';
+    // Redirect to Stripe with bin ID in the client_reference_id
+    try{sessionStorage.setItem('iqBinId',binId);localStorage.setItem('iqBinId',binId);}catch(e){}
+    window.location.href='https://buy.stripe.com/dRmeVc4Sp9Hg39QfzM5c400?client_reference_id='+binId;
   })
-  .catch(err=>{
-    console.error('JSONBin error:',err);
-    // Fallback - redirect anyway
+  .catch(()=>{
+    // Fallback redirect without bin ID
     window.location.href='https://buy.stripe.com/dRmeVc4Sp9Hg39QfzM5c400';
   });
 }
