@@ -1215,12 +1215,56 @@ function processPayment(){
     return;
   }
   if(emailErr)emailErr.textContent='';
-  // Store email globally so confirmPaid() can use it
   window._iqEmail=email;
-  // Open Stripe in new tab - THIS page stays alive with answers in memory
-  window.open('https://buy.stripe.com/dRmeVc4Sp9Hg39QfzM5c400','_blank');
-  // Show the payment confirmation overlay
+
+  // Calculate and store results NOW while in memory
+  const correct=answers.filter((a,i)=>a===Qs[i].ans).length;
+  const iq=Math.round(70+(correct/20)*75);
+  const cats={pattern:[],number:[],analogy:[],spatial:[]};
+  Qs.forEach((q,i)=>cats[q.cat].push(answers[i]===q.ans?1:0));
+  const cp=cat=>cats[cat].length?Math.round(cats[cat].reduce((a,b)=>a+b,0)/cats[cat].length*100):0;
+  const pct=iq>=130?'Top 2%':iq>=120?'Top 9%':iq>=110?'Top 25%':'Top 50%';
+  const L=['A','B','C','D'];
+  let wrong='';
+  Qs.forEach((q,i)=>{
+    const ch=answers[i];
+    if(ch===null||ch!==q.ans){
+      wrong+='Q'+(i+1)+': '+q.text+'\n';
+      wrong+='Your answer: '+(ch!==null?L[ch]+' - '+q.opts[ch]:'Skipped')+'\n';
+      wrong+='Correct: '+L[q.ans]+' - '+q.opts[q.ans]+'\n';
+      wrong+='Explanation: '+q.exp+'\n\n';
+    }
+  });
+  window._iqResults={email,iq,pct,p:cp('pattern'),n:cp('number'),s:cp('spatial'),a:cp('analogy'),wrong:wrong||'Perfect score!'};
+
+  // Show overlay - Stripe link is inside it so tap opens Stripe directly
   document.getElementById('pay-overlay').style.display='flex';
+}
+
+function confirmPaid(){
+  document.getElementById('pay-overlay').style.display='none';
+  const d=window._iqResults;
+  if(!d){alert('Session expired - please retake the test.');return;}
+
+  // Show thank you screen
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-thankyou').classList.add('active');
+  const el=document.getElementById('thankyou-email');
+  if(el)el.textContent=d.email;
+
+  // Send email
+  emailjs.send('service_xnj2aij','template_hd7n09e',{
+    email:d.email,
+    to_name:d.email.split('@')[0],
+    iq_score:d.iq,
+    percentile:d.pct,
+    pattern_score:d.p,
+    number_score:d.n,
+    spatial_score:d.s,
+    analogy_score:d.a,
+    wrong_answers:d.wrong
+  }).then(()=>console.log('Email sent to '+d.email))
+    .catch(e=>{ console.error('EmailJS error:',e); alert('Email error: '+JSON.stringify(e)); });
 }
 
 function confirmPaid(){
