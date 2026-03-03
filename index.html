@@ -1009,16 +1009,10 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
       // Answers not found - show retake screen
       window.addEventListener('DOMContentLoaded', ()=>{
         setTimeout(()=>{
-          const el = document.getElementById('screen-landing');
-          el.innerHTML = '<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;background:#0a1628">'
-            + '<div style="font-size:3.5rem;margin-bottom:20px">✅</div>'
-            + '<h2 style="font-family:Bebas Neue,Arial Black,sans-serif;font-size:2.5rem;color:#ffffff;margin-bottom:12px;letter-spacing:.04em">Payment Confirmed!</h2>'
-            + '<p style="color:#8899bb;margin-bottom:12px;line-height:1.7;max-width:400px">Your $1.99 payment was successful. However, your test session expired during the Stripe redirect.</p>'
-            + '<p style="color:#8899bb;margin-bottom:32px;line-height:1.7;max-width:400px">Please retake the test — this time your results will show instantly for free.</p>'
-            + '<button onclick="window.location.href='https://scoremyiq.com'" style="background:#dc1f1f;color:#fff;border:none;padding:18px 40px;border-radius:8px;font-size:1.05rem;font-weight:700;cursor:pointer;letter-spacing:.02em">Retake Test Free →</button>'
-            + '</div>';
-          el.classList.add('active');
-        }, 300);
+          // Just reload cleanly - user will see landing page and retake free
+          sessionStorage.setItem('showRetake','1');
+          window.location.href = 'https://scoremyiq.com';
+        }, 100);
       });
     }
   }
@@ -1172,12 +1166,22 @@ function showPay(){
 }
 
 function processPayment(){
-  // Save answers to sessionStorage so results survive the redirect
-  sessionStorage.setItem('iqAnswers', JSON.stringify(answers));
-  sessionStorage.setItem('iqTimings', JSON.stringify(timings));
-  // Redirect to Stripe Payment Link
-  // After payment Stripe redirects to https://scoremyiq.com?paid=1
-  window.location.href = 'https://buy.stripe.com/dRmeVc4Sp9Hg39QfzM5c400';
+  const emailEl = document.getElementById('userEmail');
+  const emailErr = document.getElementById('emailError');
+  const email = emailEl ? emailEl.value.trim() : '';
+  if(!email || !email.includes('@') || !email.includes('.')){
+    if(emailErr) emailErr.textContent = 'Please enter a valid email to receive your results.';
+    if(emailEl){ emailEl.style.borderColor='#ef4444'; emailEl.focus(); }
+    return;
+  }
+  if(emailErr) emailErr.textContent = '';
+  // Save compact answers
+  const a = answers.map(x => x===null?'n':x).join('');
+  try{ localStorage.setItem('iqA',a); localStorage.setItem('iqEmail',email); }catch(e){}
+  try{ sessionStorage.setItem('iqA',a); sessionStorage.setItem('iqEmail',email); }catch(e){}
+  // Redirect to Stripe in same tab
+  document.getElementById('loaderEl').classList.add('vis');
+  setTimeout(()=>{ window.location.href='https://buy.stripe.com/dRmeVc4Sp9Hg39QfzM5c400'; },300);
 }
 
 function showResults(){
