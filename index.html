@@ -908,24 +908,33 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
   </div>
 </div>
 
+<!-- THANK YOU SCREEN -->
+
+<div class="screen" id="screen-thankyou">
+  <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;background:#0a1628">
+    <div style="width:80px;height:80px;background:rgba(34,197,94,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:24px;border:2px solid #22c55e">
+      <span style="font-size:2.5rem">✅</span>
+    </div>
+    <h1 style="font-family:'Bebas Neue','Arial Black',sans-serif;font-size:2.8rem;color:#ffffff;margin-bottom:12px;letter-spacing:.04em">Thank You!</h1>
+    <h2 style="font-family:'Bebas Neue','Arial Black',sans-serif;font-size:1.6rem;color:#22c55e;margin-bottom:20px;letter-spacing:.04em">Payment Successful</h2>
+    <p style="color:#c8d4e8;margin-bottom:8px;line-height:1.7;max-width:400px;font-size:1rem">Your IQ results are on their way to your inbox!</p>
+    <p style="color:#8899bb;margin-bottom:32px;line-height:1.7;max-width:400px;font-size:.9rem">Check your email for your full IQ score, category breakdown, and explanations for every wrong answer.</p>
+    <div style="background:#0f2044;border:1px solid #162d5e;border-radius:12px;padding:20px 28px;margin-bottom:32px;max-width:380px;width:100%">
+      <div style="font-size:.75rem;color:#8899bb;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Check your inbox at</div>
+      <div style="font-size:1rem;color:#ffffff;font-weight:700">📧 The email you provided</div>
+      <div style="font-size:.75rem;color:#4a5c80;margin-top:8px">Check spam folder if not received within 2 minutes</div>
+    </div>
+    <button onclick="location.href='https://scoremyiq.com'" style="background:#dc1f1f;color:#fff;border:none;padding:16px 40px;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;letter-spacing:.02em">Take Test Again →</button>
+  </div>
+</div>
+
 <!-- WAITING SCREEN -->
 
 <div class="screen" id="screen-waiting">
   <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center">
-    <div style="font-size:3rem;margin-bottom:20px">💳</div>
-    <h2 style="font-family:'Bebas Neue','Arial Black',sans-serif;font-size:2rem;color:#ffffff;margin-bottom:12px;letter-spacing:.06em">Complete Your Payment</h2>
-    <p style="color:#8899bb;margin-bottom:32px;line-height:1.6;max-width:360px">Your Stripe payment page has opened in a new tab. After paying, Stripe will show you a <strong style="color:#ffffff">confirmation email</strong> — enter the last 4 digits of your card used to unlock your results.</p>
-    <div style="background:#0f2044;border:1px solid #162d5e;border-radius:12px;padding:24px;margin-bottom:24px;max-width:360px;width:100%">
-      <div style="font-size:.75rem;color:#8899bb;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px">Enter last 4 digits of card used</div>
-      <input id="card4Input" type="number" maxlength="4" placeholder="e.g. 4242" 
-        style="width:100%;padding:14px;background:#0a1628;border:2px solid #162d5e;border-radius:8px;color:#ffffff;font-size:1.2rem;text-align:center;letter-spacing:.3em;margin-bottom:12px;box-sizing:border-box"
-        oninput="this.value=this.value.slice(0,4)"
-      />
-      <div id="verifyError" style="color:#ef4444;font-size:.78rem;margin-bottom:10px;min-height:16px"></div>
-      <button onclick="verifyAndShowResults()" style="background:#dc1f1f;color:#ffffff;border:none;padding:16px;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;width:100%">Unlock My Results →</button>
-    </div>
-    <p style="font-size:.75rem;color:#4a5c80">Payment not opening? <a href="https://buy.stripe.com/dRmeVc4Sp9Hg39QfzM5c400" target="_blank" style="color:#8899bb">Tap here</a></p>
-    <p style="font-size:.72rem;color:#4a5c80;margin-top:8px">Used Apple Pay or Google Pay? Enter the last 4 digits shown in your payment confirmation.</p>
+    <div style="font-size:3rem;margin-bottom:20px">⏳</div>
+    <h2 style="font-family:'Bebas Neue','Arial Black',sans-serif;font-size:2rem;color:#ffffff;margin-bottom:12px;letter-spacing:.06em">Processing Payment...</h2>
+    <p style="color:#8899bb;line-height:1.6;max-width:360px">Please wait while we confirm your payment. You will be redirected automatically.</p>
   </div>
 </div>
 
@@ -995,58 +1004,16 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
 // Initialize EmailJS
 emailjs.init('k_Guda54uTldI2JdD');
 
-function sendResultsEmail(email, iqScore, percentile, catScores, wrongAnswers){
-  const L = ['A','B','C','D'];
-  let wrongText = '';
-  wrongAnswers.forEach((w, i) => {
-    wrongText += 'Q' + (w.qNum) + ': ' + w.question + '\n';
-    wrongText += 'Your answer: ' + L[w.chosen] + ' - ' + w.chosenText + '\n';
-    wrongText += 'Correct answer: ' + L[w.correct] + ' - ' + w.correctText + '\n';
-    wrongText += 'Explanation: ' + w.exp + '\n\n';
-  });
-
-  const templateParams = {
-    email: email,
-    to_name: email.split('@')[0],
-    iq_score: iqScore,
-    percentile: percentile + '%',
-    pattern_score: catScores.pattern,
-    number_score: catScores.number,
-    spatial_score: catScores.spatial,
-    analogy_score: catScores.analogy,
-    wrong_answers: wrongText || 'Perfect score! No wrong answers.'
-  };
-
-  emailjs.send('service_xnj2aij', 'template_hd7n09e', templateParams)
-    .then(() => console.log('Email sent!'))
-    .catch(err => console.error('Email error:', err));
-}
 
 // Check if returning from Stripe payment
 (function(){
-  const params = new URLSearchParams(window.location.search);
-  if(params.get('paid') === '1'){
-    // Try to restore answers from localStorage/sessionStorage
-    let a = null;
-    try { a = localStorage.getItem('iqA'); } catch(e){}
-    if(!a){ try { a = sessionStorage.getItem('iqA'); } catch(e){} }
-    
-    if(a && a.length === 20){
-      // Decode compact answer string
-      answers = a.split('').map(x => x === 'n' ? null : parseInt(x));
-      timings = new Array(20).fill(15); // default timings
-      try { localStorage.removeItem('iqA'); sessionStorage.removeItem('iqA'); } catch(e){}
-      window.addEventListener('DOMContentLoaded', ()=> setTimeout(showResults, 400));
-    } else {
-      // Answers not found - show retake screen
-      window.addEventListener('DOMContentLoaded', ()=>{
-        setTimeout(()=>{
-          // Just reload cleanly - user will see landing page and retake free
-          sessionStorage.setItem('showRetake','1');
-          window.location.href = 'https://scoremyiq.com';
-        }, 100);
-      });
-    }
+  if(new URLSearchParams(window.location.search).get('paid')==='1'){
+    window.addEventListener('DOMContentLoaded',()=>{
+      setTimeout(()=>{
+        document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+        document.getElementById('screen-thankyou').classList.add('active');
+      },300);
+    });
   }
 })();
 
@@ -1198,23 +1165,54 @@ function showPay(){
 }
 
 function processPayment(){
-  const emailEl = document.getElementById('userEmail');
-  const emailErr = document.getElementById('emailError');
-  const email = emailEl ? emailEl.value.trim() : '';
-  if(!email || !email.includes('@') || !email.includes('.')){
-    if(emailErr) emailErr.textContent = 'Please enter a valid email to receive your results.';
-    if(emailEl){ emailEl.style.borderColor='#ef4444'; emailEl.focus(); }
+  const emailEl=document.getElementById('userEmail');
+  const emailErr=document.getElementById('emailError');
+  const email=emailEl?emailEl.value.trim():'';
+  if(!email||!email.includes('@')||!email.includes('.')){
+    if(emailErr)emailErr.textContent='Please enter a valid email to receive your results.';
+    if(emailEl){emailEl.style.borderColor='#ef4444';emailEl.focus();}
     return;
   }
-  if(emailErr) emailErr.textContent = '';
-  // Save compact answers
-  const a = answers.map(x => x===null?'n':x).join('');
-  try{ localStorage.setItem('iqA',a); localStorage.setItem('iqEmail',email); }catch(e){}
-  try{ sessionStorage.setItem('iqA',a); sessionStorage.setItem('iqEmail',email); }catch(e){}
-  // Redirect to Stripe in same tab
+  if(emailErr)emailErr.textContent='';
+
+  // Calculate results while answers are in memory
+  const L=['A','B','C','D'];
+  const correct=answers.filter((a,i)=>a===Qs[i].ans).length;
+  const iq=Math.round(70+(correct/20)*75);
+  const pct=iq>=130?'Top 2%':iq>=120?'Top 9%':iq>=110?'Top 25%':iq>=100?'Top 50%':'Below average';
+  const cats={pattern:[],number:[],analogy:[],spatial:[]};
+  Qs.forEach((q,i)=>cats[q.cat].push(answers[i]===q.ans?1:0));
+  const cp=cat=>cats[cat].length?Math.round(cats[cat].reduce((a,b)=>a+b,0)/cats[cat].length*100):0;
+  let wrong='';
+  Qs.forEach((q,i)=>{
+    const ch=answers[i];
+    if(ch===null||ch!==q.ans){
+      wrong+='Q'+(i+1)+': '+q.text+'\n';
+      wrong+='Your answer: '+(ch!==null?L[ch]+' - '+q.opts[ch]:'Skipped')+'\n';
+      wrong+='Correct: '+L[q.ans]+' - '+q.opts[q.ans]+'\n';
+      wrong+='Explanation: '+q.exp+'\n\n';
+    }
+  });
+
+  // Send email via EmailJS NOW before leaving page
+  emailjs.send('service_xnj2aij','template_hd7n09e',{
+    email:email,
+    to_name:email.split('@')[0],
+    iq_score:iq,
+    percentile:pct,
+    pattern_score:cp('pattern'),
+    number_score:cp('number'),
+    spatial_score:cp('spatial'),
+    analogy_score:cp('analogy'),
+    wrong_answers:wrong||'Perfect score! No wrong answers.'
+  }).then(()=>console.log('Email sent')).catch(e=>console.error(e));
+
+  // Redirect to Stripe - success URL is scoremyiq.com?paid=1
   document.getElementById('loaderEl').classList.add('vis');
-  setTimeout(()=>{ window.location.href='https://buy.stripe.com/dRmeVc4Sp9Hg39QfzM5c400'; },300);
+  setTimeout(()=>{window.location.href='https://buy.stripe.com/dRmeVc4Sp9Hg39QfzM5c400';},600);
 }
+
+
 
 function showResults(){
   show('results');
