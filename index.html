@@ -730,6 +730,8 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
 .modal-close:hover{color:#ffffff}
 </style>
 
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
 </head>
 <body>
 
@@ -990,6 +992,36 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
 </div><!-- /wrap -->
 
 <script>
+// Initialize EmailJS
+emailjs.init('k_Guda54uTldI2JdD');
+
+function sendResultsEmail(email, iqScore, percentile, catScores, wrongAnswers){
+  const L = ['A','B','C','D'];
+  let wrongText = '';
+  wrongAnswers.forEach((w, i) => {
+    wrongText += 'Q' + (w.qNum) + ': ' + w.question + '\n';
+    wrongText += 'Your answer: ' + L[w.chosen] + ' - ' + w.chosenText + '\n';
+    wrongText += 'Correct answer: ' + L[w.correct] + ' - ' + w.correctText + '\n';
+    wrongText += 'Explanation: ' + w.exp + '\n\n';
+  });
+
+  const templateParams = {
+    email: email,
+    to_name: email.split('@')[0],
+    iq_score: iqScore,
+    percentile: percentile + '%',
+    pattern_score: catScores.pattern,
+    number_score: catScores.number,
+    spatial_score: catScores.spatial,
+    analogy_score: catScores.analogy,
+    wrong_answers: wrongText || 'Perfect score! No wrong answers.'
+  };
+
+  emailjs.send('service_xnj2aij', 'template_hd7n09e', templateParams)
+    .then(() => console.log('Email sent!'))
+    .catch(err => console.error('Email error:', err));
+}
+
 // Check if returning from Stripe payment
 (function(){
   const params = new URLSearchParams(window.location.search);
@@ -1226,6 +1258,36 @@ function showResults(){
     });
   },500);
   setTimeout(buildReview,300);
+
+  // Send results email via EmailJS
+  try {
+    const email = localStorage.getItem('iqEmail') || sessionStorage.getItem('iqEmail') || '';
+    if(email) {
+      const catScores = {
+        pattern: cp('pattern'),
+        number: cp('number'),
+        spatial: cp('spatial'),
+        analogy: cp('analogy')
+      };
+      const wrongAnswers = [];
+      Qs.forEach((q,i) => {
+        const chosen = answers[i];
+        if(chosen === null || chosen !== q.ans) {
+          wrongAnswers.push({
+            qNum: i+1,
+            question: q.text,
+            chosen: chosen,
+            chosenText: chosen !== null ? q.opts[chosen] : 'Skipped',
+            correct: q.ans,
+            correctText: q.opts[q.ans],
+            exp: q.exp
+          });
+        }
+      });
+      const pctText = iq>=130?'Top 2%':iq>=120?'Top 9%':iq>=110?'Top 25%':iq>=100?'Top 50%':'Below average';
+      sendResultsEmail(email, iq, pctText, catScores, wrongAnswers);
+    }
+  } catch(e){ console.error('Email send failed:', e); }
 }
 
 function buildReview(){
