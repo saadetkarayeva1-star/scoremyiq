@@ -756,7 +756,6 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
       <p class="hero-sub">20 elite questions spanning pattern recognition, number logic, spatial reasoning and analogy. No knowledge required — pure cognitive power.</p>
     </div>
 
-```
 <div class="price-hero">
   <div class="price-left">
     <div class="pl-only">Only</div>
@@ -815,7 +814,6 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
     Start Test <div class="cta-arrow">→</div>
   </button>
 </div>
-```
 
   </div>
 </div>
@@ -837,7 +835,6 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
   <div class="topbar"><div class="logo">MIND<span>METRIC</span></div><div class="price-tag">Only $1.99</div></div>
   <div class="pay-wrap">
 
-```
 <div class="pay-tease">
   <div class="pay-tease-top">
     <h2>YOUR SCORE IS <span>READY</span></h2>
@@ -845,7 +842,7 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
   </div>
   <div class="score-tease">
     <div class="st-label">Your IQ Score</div>
-    <div class="st-score">128</div>
+    <div class="st-score" id="stScoreBlur">128</div>
     <div class="st-bar">
       <div class="st-bar-fill"></div>
       <div class="st-bar-dot"></div>
@@ -896,7 +893,6 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
   </button>
   <div class="secure">🔒 256-bit SSL · Secured by Stripe · No recurring charges</div>
 </div>
-```
 
   </div>
 </div>
@@ -915,15 +911,8 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
       <div style="font-size:1rem;color:#ffffff;font-weight:700">📧 <span id="thankyou-email">your inbox</span></div>
       <div style="font-size:.75rem;color:#4a5c80;margin-top:8px">Check spam folder if not received within 2 minutes</div>
     </div>
-    <button onclick="location.href='https://scoremyiq.com'" style="background:#dc1f1f;color:#fff;border:none;padding:16px 40px;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;letter-spacing:.02em">Take Test Again →</button>
-  </div>
-</div>
-
-```
-<h2 style="font-family:'Bebas Neue','Arial Black',sans-serif;font-size:2rem;color:#ffffff;margin-bottom:12px;letter-spacing:.06em">Processing Payment...</h2>
-<p style="color:#8899bb;line-height:1.6;max-width:360px">Please wait while we confirm your payment. You will be redirected automatically.</p>
-```
-
+    <button onclick="showResults()" style="background:#1e3a7a;color:#fff;border:2px solid #162d5e;padding:14px 32px;border-radius:8px;font-size:.95rem;font-weight:700;cursor:pointer;letter-spacing:.02em;margin-bottom:12px;display:block;width:100%;max-width:340px;margin-left:auto;margin-right:auto">View My Full Results →</button>
+    <button onclick="location.href='https://scoremyiq.com'" style="background:transparent;color:#8899bb;border:none;padding:10px 40px;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;letter-spacing:.02em">Take Test Again</button>
   </div>
 </div>
 
@@ -985,6 +974,27 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
   </div>
 </div>
 
+</div>
+
+<!-- Payment overlay: shown after clicking "Reveal My IQ Score" -->
+<div id="pay-overlay" style="display:none;position:fixed;inset:0;background:rgba(7,12,26,.96);z-index:400;align-items:center;justify-content:center;padding:20px;flex-direction:column">
+  <div style="background:#0f2044;border:1px solid #162d5e;border-radius:16px;padding:36px 28px;max-width:420px;width:100%;text-align:center">
+    <div style="font-size:2.8rem;margin-bottom:12px">🔒</div>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.06em;color:#fff;margin-bottom:8px">Secure Payment</h2>
+    <p style="color:#c8d4e8;font-size:.9rem;line-height:1.6;margin-bottom:24px">Click below to pay $1.99 via Stripe. After payment, return here and click <strong style="color:#22c55e">I've Paid</strong>.</p>
+    <a id="stripe-pay-link" href="https://buy.stripe.com/dRmeVc4Sp9Hg39QfzM5c400" target="_blank" rel="noopener"
+      style="display:block;background:#dc1f1f;color:#fff;text-decoration:none;padding:18px 24px;border-radius:8px;font-weight:800;font-size:1rem;margin-bottom:14px;box-shadow:0 6px 24px rgba(220,31,31,.4);letter-spacing:.02em">
+      💳 Pay $1.99 via Stripe →
+    </a>
+    <button onclick="confirmPaid()"
+      style="width:100%;padding:15px;background:rgba(34,197,94,.1);border:2px solid #22c55e;border-radius:8px;color:#22c55e;font-size:.95rem;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;margin-bottom:10px;letter-spacing:.01em">
+      ✅ I've completed my payment
+    </button>
+    <button onclick="document.getElementById('pay-overlay').style.display='none'"
+      style="width:100%;padding:10px;background:transparent;border:none;color:#4a5c80;font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif">
+      ← Cancel
+    </button>
+  </div>
 </div>
 
 <script>
@@ -1050,9 +1060,9 @@ const Qs=[
   {cat:'analogy',type:'text',text:'MANGO : FRUIT :: COBRA : ?',
    opts:['Venom','Reptile','Snake','Animal'],ans:2,exp:'Mango is a specific type of Fruit; Cobra is a specific type of Snake'},
 
-  {cat:'pattern',type:'matrix',text:'Each row uses the same 3 shapes. Row 1: △ ◇ □. Row 2: + ⬡ △. Row 3: △ ◇ ?',
+  {cat:'pattern',type:'matrix',text:'Each row repeats the same sequence of three symbols. What symbol completes the final row?',
    matrix:[['△','◇','□'],['△','◇','□'],['△','◇','?']],
-   opts:['△','◇','□','⬡'],ans:2,exp:'The pattern in each row ends with □ (square). Row 3 follows the same rule → answer is □'},
+   opts:['△','◇','□','⬡'],ans:2,exp:'Every row follows the same sequence: △ ◇ □. The missing cell in row 3 must be □.'},
 
   {cat:'number',type:'seq',text:'Find the odd one out:',
    seq:[4,9,16,20,25,36],opts:['4','9','20','25'],ans:2,exp:'4,9,16,25,36 are perfect squares. 20 is NOT a perfect square (√20≈4.47)'},
@@ -1102,8 +1112,9 @@ function renderQ(){
       <div class="q-text">${q.text}</div>`;
 
   if(q.type==='matrix'){
-    h+=`<div class="mx-wrap"><div class="mx-grid">`;
-    q.matrix.forEach(r=>r.forEach(c=>{h+=`<div class="mx-cell ${c==='?'?'miss':''}">${c}</div>`;}));
+    const cols=q.matrix[0].length,cellSz=cols>3?58:70;
+    h+=`<div class="mx-wrap"><div class="mx-grid" style="grid-template-columns:repeat(${cols},${cellSz}px)">`;
+    q.matrix.forEach(r=>r.forEach(c=>{h+=`<div class="mx-cell ${c==='?'?'miss':''}" style="width:${cellSz}px;height:${cellSz}px">${c}</div>`;}));
     h+=`</div></div>`;
   }
   if(q.type==='seq'){
@@ -1146,6 +1157,8 @@ function nextQ(){cur++;if(cur>=20)showPay();else renderQ();}
 function showPay(){
   show('payment');
   const c=answers.filter((a,i)=>a===Qs[i].ans).length;
+  const est=Math.round(70+(c/20)*75);
+  const sb=document.getElementById('stScoreBlur');if(sb)sb.textContent=est;
   const r=c>=17?'125–145+':c>=14?'112–130':c>=10?'96–114':c>=7?'85–102':'70–92';
   const el=document.getElementById('teaseRange');if(el)el.textContent=r;
 }
@@ -1238,7 +1251,7 @@ function showResults(){
   const wrong=20-correct,acc=Math.round(correct/20*100);
   const vt=timings.filter(t=>t>0);
   const avg=vt.length?Math.round(vt.reduce((a,b)=>a+b,0)/vt.length):0;
-  const iq=Math.round(70+(correct/20)*75+(avg<15?5:0));
+  const iq=Math.round(70+(correct/20)*75);
 
   document.getElementById('scC').textContent=correct;
   document.getElementById('scW').textContent=wrong;
@@ -1366,6 +1379,29 @@ function shareResult(){
 
 function checkAndShowResults(){
   showResults();
+}
+
+function sendResultsEmail(email,iq,pct,cats,wrongArr){
+  const L=['A','B','C','D'];
+  let wrong='';
+  wrongArr.forEach(w=>{
+    wrong+='Q'+w.qNum+': '+w.question+'\n';
+    wrong+='Your answer: '+(w.chosen!==null?L[w.chosen]+' - '+w.chosenText:'Skipped')+'\n';
+    wrong+='Correct: '+L[w.correct]+' - '+w.correctText+'\n';
+    wrong+='Explanation: '+w.exp+'\n\n';
+  });
+  emailjs.send('service_xnj2aij','template_hd7n09e',{
+    email:email,
+    to_name:email.split('@')[0],
+    iq_score:iq,
+    percentile:pct,
+    pattern_score:cats.pattern,
+    number_score:cats.number,
+    spatial_score:cats.spatial,
+    analogy_score:cats.analogy,
+    wrong_answers:wrong||'Perfect score!'
+  }).then(()=>console.log('Email sent!'))
+    .catch(e=>console.error('EmailJS error:',e));
 }
 
 function openModal(id){document.getElementById('modal-'+id).classList.add('vis');}
