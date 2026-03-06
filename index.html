@@ -730,7 +730,6 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
 .modal-close:hover{color:#ffffff}
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 </head>
 <body>
@@ -870,15 +869,6 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
     </div>
   </div>
 
-  <div style="margin-bottom:16px">
-    <label style="display:block;font-size:.75rem;color:#8899bb;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Your Email — Results will be shown after payment</label>
-    <input id="userEmail" type="email" placeholder="you@example.com"
-      style="width:100%;padding:14px;background:#0a1628;border:2px solid #162d5e;border-radius:8px;color:#ffffff;font-size:.95rem;box-sizing:border-box;outline:none"
-      onfocus="this.style.borderColor='#dc1f1f'" onblur="this.style.borderColor='#162d5e'"
-    />
-    <div id="emailError" style="color:#ef4444;font-size:.75rem;margin-top:6px;min-height:16px"></div>
-  </div>
-
   <button class="pay-btn" id="payBtn" onclick="processPayment()">
     <div class="pbi">
       <div class="pbl">
@@ -904,13 +894,7 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
     </div>
     <h1 style="font-family:'Bebas Neue','Arial Black',sans-serif;font-size:2.8rem;color:#ffffff;margin-bottom:12px;letter-spacing:.04em">Thank You!</h1>
     <h2 style="font-family:'Bebas Neue','Arial Black',sans-serif;font-size:1.6rem;color:#22c55e;margin-bottom:20px;letter-spacing:.04em">Payment Successful</h2>
-    <p style="color:#c8d4e8;margin-bottom:8px;line-height:1.7;max-width:400px;font-size:1rem">Your IQ results are on their way to your inbox!</p>
-    <p style="color:#8899bb;margin-bottom:32px;line-height:1.7;max-width:400px;font-size:.9rem">Check your email for your full IQ score, category breakdown, and explanations for every wrong answer.</p>
-    <div style="background:#0f2044;border:1px solid #162d5e;border-radius:12px;padding:20px 28px;margin-bottom:32px;max-width:380px;width:100%">
-      <div style="font-size:.75rem;color:#8899bb;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Check your inbox at</div>
-      <div style="font-size:1rem;color:#ffffff;font-weight:700">📧 <span id="thankyou-email">your inbox</span></div>
-      <div style="font-size:.75rem;color:#4a5c80;margin-top:8px">Check spam folder if not received within 2 minutes</div>
-    </div>
+    <p style="color:#c8d4e8;margin-bottom:32px;line-height:1.7;max-width:400px;font-size:1rem">Your full IQ score and breakdown are ready to view.</p>
     <button onclick="showResults()" style="background:#1e3a7a;color:#fff;border:2px solid #162d5e;padding:14px 32px;border-radius:8px;font-size:.95rem;font-weight:700;cursor:pointer;letter-spacing:.02em;margin-bottom:12px;display:block;width:100%;max-width:340px;margin-left:auto;margin-right:auto">View My Full Results →</button>
     <button onclick="location.href='https://scoremyiq.com'" style="background:transparent;color:#8899bb;border:none;padding:10px 40px;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;letter-spacing:.02em">Take Test Again</button>
   </div>
@@ -994,9 +978,6 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
 </div>
 
 <script>
-// Initialize EmailJS
-emailjs.init('k_Guda54uTldI2JdD');
-
 // Check if returning from Stripe payment
 (function(){
   if(new URLSearchParams(window.location.search).get('paid')==='1'){
@@ -1006,23 +987,7 @@ emailjs.init('k_Guda54uTldI2JdD');
       document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
       document.getElementById('screen-thankyou').classList.add('active');
       if(stored){
-        const r=JSON.parse(stored);
-        const el=document.getElementById('thankyou-email');
-        if(el)el.textContent=r.email||'your inbox';
-        if(r.email){
-          emailjs.send('service_xnj2aij','template_hd7n09e',{
-            email:r.email,
-            to_name:r.email.split('@')[0],
-            iq_score:r.iq,
-            percentile:r.pct,
-            pattern_score:r.p,
-            number_score:r.n,
-            spatial_score:r.s,
-            analogy_score:r.a,
-            wrong_answers:r.wrong
-          }).then(()=>console.log('Email sent!'))
-            .catch(e=>console.error('EmailJS error:',e));
-        }
+        JSON.parse(stored);
       }
     }
     if(document.readyState==='loading'){
@@ -1184,17 +1149,6 @@ function showPay(){
 }
 
 function processPayment(){
-  const emailEl=document.getElementById('userEmail');
-  const emailErr=document.getElementById('emailError');
-  const email=emailEl?emailEl.value.trim():'';
-  if(!email||!email.includes('@')||!email.includes('.')){
-    if(emailErr)emailErr.textContent='Please enter a valid email to receive your results.';
-    if(emailEl){emailEl.style.borderColor='#ef4444';emailEl.focus();}
-    return;
-  }
-  if(emailErr)emailErr.textContent='';
-  window._iqEmail=email;
-
   // Calculate and store results NOW while in memory
   const correct=answers.filter((a,i)=>a===Qs[i].ans).length;
   const iq=Math.round(70+(correct/20)*75);
@@ -1213,7 +1167,7 @@ function processPayment(){
       wrong+='Explanation: '+q.exp+'\n\n';
     }
   });
-  window._iqResults={email,iq,pct,p:cp('pattern'),n:cp('number'),s:cp('spatial'),a:cp('analogy'),wrong:wrong||'Perfect score!'};
+  window._iqResults={iq,pct,p:cp('pattern'),n:cp('number'),s:cp('spatial'),a:cp('analogy'),wrong:wrong||'Perfect score!'};
 
   // Save to localStorage so results survive page navigation to/from Stripe
   localStorage.setItem('_iqPendingResults', JSON.stringify(window._iqResults));
@@ -1224,48 +1178,10 @@ function processPayment(){
 
 function confirmPaid(){
   document.getElementById('pay-overlay').style.display='none';
-  const email=window._iqEmail||'';
-
-  // Calculate results - answers still in memory!
-  const correct=answers.filter((a,i)=>a===Qs[i].ans).length;
-  const iq=Math.round(70+(correct/20)*75);
-  const cats={pattern:[],number:[],analogy:[],spatial:[]};
-  Qs.forEach((q,i)=>cats[q.cat].push(answers[i]===q.ans?1:0));
-  const cp=cat=>cats[cat].length?Math.round(cats[cat].reduce((a,b)=>a+b,0)/cats[cat].length*100):0;
-  const pct=iq>=130?'Top 2%':iq>=120?'Top 9%':iq>=110?'Top 25%':'Top 50%';
-  const L=['A','B','C','D'];
-  let wrong='';
-  Qs.forEach((q,i)=>{
-    const ch=answers[i];
-    if(ch===null||ch!==q.ans){
-      wrong+='Q'+(i+1)+': '+q.text+'\n';
-      wrong+='Your answer: '+(ch!==null?L[ch]+' - '+q.opts[ch]:'Skipped')+'\n';
-      wrong+='Correct: '+L[q.ans]+' - '+q.opts[q.ans]+'\n';
-      wrong+='Explanation: '+q.exp+'\n\n';
-    }
-  });
 
   // Show thank you screen
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen-thankyou').classList.add('active');
-  const el=document.getElementById('thankyou-email');
-  if(el)el.textContent=email||'your inbox';
-
-  // Send email NOW - answers still in memory
-  if(email){
-    emailjs.send('service_xnj2aij','template_hd7n09e',{
-      email:email,
-      to_name:email.split('@')[0],
-      iq_score:iq,
-      percentile:pct,
-      pattern_score:cp('pattern'),
-      number_score:cp('number'),
-      spatial_score:cp('spatial'),
-      analogy_score:cp('analogy'),
-      wrong_answers:wrong||'Perfect score!'
-    }).then(()=>console.log('Email sent!'))
-      .catch(e=>console.error('EmailJS error:',e));
-  }
 }
 
 function showResults(){
@@ -1310,36 +1226,6 @@ function showResults(){
     });
   },500);
   setTimeout(buildReview,300);
-
-  // Send results email via EmailJS
-  try {
-    const email = localStorage.getItem('iqEmail') || sessionStorage.getItem('iqEmail') || '';
-    if(email) {
-      const catScores = {
-        pattern: cp('pattern'),
-        number: cp('number'),
-        spatial: cp('spatial'),
-        analogy: cp('analogy')
-      };
-      const wrongAnswers = [];
-      Qs.forEach((q,i) => {
-        const chosen = answers[i];
-        if(chosen === null || chosen !== q.ans) {
-          wrongAnswers.push({
-            qNum: i+1,
-            question: q.text,
-            chosen: chosen,
-            chosenText: chosen !== null ? q.opts[chosen] : 'Skipped',
-            correct: q.ans,
-            correctText: q.opts[q.ans],
-            exp: q.exp
-          });
-        }
-      });
-      const pctText = iq>=130?'Top 2%':iq>=120?'Top 9%':iq>=110?'Top 25%':iq>=100?'Top 50%':'Below average';
-      sendResultsEmail(email, iq, pctText, catScores, wrongAnswers);
-    }
-  } catch(e){ console.error('Email send failed:', e); }
 }
 
 function buildReview(){
@@ -1404,28 +1290,6 @@ function checkAndShowResults(){
   showResults();
 }
 
-function sendResultsEmail(email,iq,pct,cats,wrongArr){
-  const L=['A','B','C','D'];
-  let wrong='';
-  wrongArr.forEach(w=>{
-    wrong+='Q'+w.qNum+': '+w.question+'\n';
-    wrong+='Your answer: '+(w.chosen!==null?L[w.chosen]+' - '+w.chosenText:'Skipped')+'\n';
-    wrong+='Correct: '+L[w.correct]+' - '+w.correctText+'\n';
-    wrong+='Explanation: '+w.exp+'\n\n';
-  });
-  emailjs.send('service_xnj2aij','template_hd7n09e',{
-    email:email,
-    to_name:email.split('@')[0],
-    iq_score:iq,
-    percentile:pct,
-    pattern_score:cats.pattern,
-    number_score:cats.number,
-    spatial_score:cats.spatial,
-    analogy_score:cats.analogy,
-    wrong_answers:wrong||'Perfect score!'
-  }).then(()=>console.log('Email sent!'))
-    .catch(e=>console.error('EmailJS error:',e));
-}
 
 function openModal(id){document.getElementById('modal-'+id).classList.add('vis');}
 function closeModal(id){document.getElementById('modal-'+id).classList.remove('vis');}
