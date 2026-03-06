@@ -742,8 +742,6 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
 
 <div class="wrap">
 
-<!-- ══════════════ LANDING ══════════════ -->
-
 <div class="screen active" id="screen-landing">
 
   <div class="topbar">
@@ -759,7 +757,6 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
     </div>
 
 ```
-<!-- $1.99 front and centre -->
 <div class="price-hero">
   <div class="price-left">
     <div class="pl-only">Only</div>
@@ -785,14 +782,14 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
   <div class="cta-note">🔒 Secure payment · Instant results · No subscription</div>
 </div>
 
-<!-- Stats -->
+
 <div class="stats-strip">
   <div class="stat-item"><div class="stat-n">20</div><div class="stat-l">Questions</div></div>
   <div class="stat-item"><div class="stat-n">~12</div><div class="stat-l">Minutes</div></div>
   <div class="stat-item"><div class="stat-n">IQ</div><div class="stat-l">Score + Report</div></div>
 </div>
 
-<!-- Features -->
+
 <div class="feat-title">WHAT WE <span>TEST</span></div>
 <div class="feat-grid">
   <div class="feat"><div class="feat-num">01</div><div><h3>Pattern Recognition</h3><p>Visual matrix puzzles used in professional IQ assessments</p></div></div>
@@ -801,14 +798,14 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
   <div class="feat"><div class="feat-num">04</div><div><h3>Analogy &amp; Logic</h3><p>Deductive reasoning and precise word relationships</p></div></div>
 </div>
 
-<!-- Proof bar -->
+
 <div class="proof-bar">
   <div class="proof-item"><div class="proof-dot"></div>47,382 tests completed</div>
   <div class="proof-item"><div class="proof-dot"></div>Average score: IQ 104</div>
   <div class="proof-item"><div class="proof-dot"></div>Only 8% score above 130</div>
 </div>
 
-<!-- Bottom CTA -->
+
 <div class="land-bottom">
   <div class="lb-text">
     <h3>Ready to find out?</h3>
@@ -823,8 +820,6 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
   </div>
 </div>
 
-<!-- ══════════════ QUESTION ══════════════ -->
-
 <div class="screen" id="screen-question">
   <div class="topbar" style="padding-bottom:0;margin-bottom:0">
     <div class="logo">MIND<span>METRIC</span></div>
@@ -837,8 +832,6 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
   </div>
   <div id="qContainer"></div>
 </div>
-
-<!-- ══════════════ PAYMENT ══════════════ -->
 
 <div class="screen" id="screen-payment">
   <div class="topbar"><div class="logo">MIND<span>METRIC</span></div><div class="price-tag">Only $1.99</div></div>
@@ -908,8 +901,6 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
   </div>
 </div>
 
-<!-- THANK YOU SCREEN -->
-
 <div class="screen" id="screen-thankyou">
   <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;background:#0a1628">
     <div style="width:80px;height:80px;background:rgba(34,197,94,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:24px;border:2px solid #22c55e">
@@ -928,17 +919,13 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
   </div>
 </div>
 
-<!-- WAITING SCREEN -->
+```
+<h2 style="font-family:'Bebas Neue','Arial Black',sans-serif;font-size:2rem;color:#ffffff;margin-bottom:12px;letter-spacing:.06em">Processing Payment...</h2>
+<p style="color:#8899bb;line-height:1.6;max-width:360px">Please wait while we confirm your payment. You will be redirected automatically.</p>
+```
 
-<div class="screen" id="screen-waiting">
-  <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center">
-    <div style="font-size:3rem;margin-bottom:20px">⏳</div>
-    <h2 style="font-family:'Bebas Neue','Arial Black',sans-serif;font-size:2rem;color:#ffffff;margin-bottom:12px;letter-spacing:.06em">Processing Payment...</h2>
-    <p style="color:#8899bb;line-height:1.6;max-width:360px">Please wait while we confirm your payment. You will be redirected automatically.</p>
   </div>
 </div>
-
-<!-- ══════════════ RESULTS ══════════════ -->
 
 <div class="screen" id="screen-results">
   <div class="topbar"><div class="logo">MIND<span>METRIC</span></div></div>
@@ -998,64 +985,22 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
   </div>
 </div>
 
-</div><!-- /wrap -->
+</div>
 
 <script>
 // Initialize EmailJS
 emailjs.init('k_Guda54uTldI2JdD');
 
-
 // Check if returning from Stripe payment
 (function(){
-  const params=new URLSearchParams(window.location.search);
-  if(params.get('paid')!=='1') return;
-  window.addEventListener('DOMContentLoaded',()=>{
-    setTimeout(()=>{
-      document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-      document.getElementById('screen-thankyou').classList.add('active');
-
-      // Get bin ID from storage
-      let binId=null;
-      try{binId=sessionStorage.getItem('iqBinId');}catch(e){}
-      if(!binId){try{binId=localStorage.getItem('iqBinId');}catch(e){}}
-
-      if(!binId){
-        console.log('No bin ID found - cannot send email');
-        return;
-      }
-
-      // Fetch from JSONBin and send email
-      fetch('https://api.jsonbin.io/v3/b/'+binId+'/latest',{
-        headers:{
-          'X-Master-Key':'$2a$10$Z/Cp1eTSwUBc1M6S8brgT.dJmIMx9MVlwY.cl5QowgM7PGD6yIfj.',
-          'X-Access-Key':'$2a$10$9rL1KFiTc9PHJ.o9XNVloOL4BArLUbCyPUTma2Q3m6pNkwaPloHDO'
-        }
-      })
-      .then(r=>r.json())
-      .then(r=>{
-        const d=r.record;
-        const el=document.getElementById('thankyou-email');
-        if(el) el.textContent=d.email;
-
-        return emailjs.send('service_xnj2aij','template_hd7n09e',{
-          email:d.email,
-          to_name:d.email.split('@')[0],
-          iq_score:d.iq,
-          percentile:d.pct,
-          pattern_score:d.p,
-          number_score:d.n,
-          spatial_score:d.s,
-          analogy_score:d.a,
-          wrong_answers:d.wrong
-        });
-      })
-      .then(()=>{
-        console.log('Email sent successfully!');
-        try{sessionStorage.removeItem('iqBinId');localStorage.removeItem('iqBinId');}catch(e){}
-      })
-      .catch(e=>console.error('Error:',e));
-    },500);
-  });
+  if(new URLSearchParams(window.location.search).get('paid')==='1'){
+    window.addEventListener('DOMContentLoaded',()=>{
+      setTimeout(()=>{
+        document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+        document.getElementById('screen-thankyou').classList.add('active');
+      },300);
+    });
+  }
 })();
 
 const Qs=[
@@ -1243,32 +1188,6 @@ function processPayment(){
 
 function confirmPaid(){
   document.getElementById('pay-overlay').style.display='none';
-  const d=window._iqResults;
-  if(!d){alert('Session expired - please retake the test.');return;}
-
-  // Show thank you screen
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById('screen-thankyou').classList.add('active');
-  const el=document.getElementById('thankyou-email');
-  if(el)el.textContent=d.email;
-
-  // Send email
-  emailjs.send('service_xnj2aij','template_hd7n09e',{
-    email:d.email,
-    to_name:d.email.split('@')[0],
-    iq_score:d.iq,
-    percentile:d.pct,
-    pattern_score:d.p,
-    number_score:d.n,
-    spatial_score:d.s,
-    analogy_score:d.a,
-    wrong_answers:d.wrong
-  }).then(()=>console.log('Email sent to '+d.email))
-    .catch(e=>{ console.error('EmailJS error:',e); alert('Email error: '+JSON.stringify(e)); });
-}
-
-function confirmPaid(){
-  document.getElementById('pay-overlay').style.display='none';
   const email=window._iqEmail||'';
 
   // Calculate results - answers still in memory!
@@ -1312,8 +1231,6 @@ function confirmPaid(){
       .catch(e=>console.error('EmailJS error:',e));
   }
 }
-
-
 
 function showResults(){
   show('results');
@@ -1447,34 +1364,6 @@ function shareResult(){
   else navigator.clipboard.writeText(txt).then(()=>alert('Copied to clipboard!'));
 }
 
-
-function verifyAndShowResults(){
-  const input = document.getElementById('card4Input').value.trim();
-  const errEl = document.getElementById('verifyError');
-  
-  if(input.length !== 4 || isNaN(input)){
-    errEl.textContent = 'Please enter exactly 4 digits.';
-    return;
-  }
-  
-  // Store the verified card digits so we know they actually went through payment
-  const verifyKey = 'iqVerified_' + input;
-  try { localStorage.setItem(verifyKey, Date.now().toString()); } catch(e){}
-  
-  // Show results
-  errEl.textContent = '';
-  const savedAnswers = answers.filter(a => a !== null);
-  if(savedAnswers.length > 0){
-    showResults();
-  } else {
-    try {
-      const a = localStorage.getItem('iqAnswers');
-      if(a){ answers = JSON.parse(a); showResults(); return; }
-    } catch(e){}
-    errEl.textContent = 'Session expired. Please retake the test.';
-  }
-}
-
 function checkAndShowResults(){
   verifyAndShowResults();
 }
@@ -1487,8 +1376,6 @@ document.querySelectorAll('.modal-overlay').forEach(el=>{
 });
 
 </script>
-
-<!-- FOOTER -->
 
 <footer class="site-footer">
   <div class="disclaimer-bar">For entertainment purposes only. Not a clinically validated IQ assessment.</div>
@@ -1505,8 +1392,6 @@ document.querySelectorAll('.modal-overlay').forEach(el=>{
   </div>
   <div class="footer-copy">© 2025 ScoreMyIQ.com · All rights reserved · Payments secured by Stripe</div>
 </footer>
-
-<!-- TERMS MODAL -->
 
 <div class="modal-overlay" id="modal-terms">
   <div class="modal-box">
@@ -1532,8 +1417,6 @@ document.querySelectorAll('.modal-overlay').forEach(el=>{
   </div>
 </div>
 
-<!-- PRIVACY MODAL -->
-
 <div class="modal-overlay" id="modal-privacy">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('privacy')">✕</button>
@@ -1555,8 +1438,6 @@ document.querySelectorAll('.modal-overlay').forEach(el=>{
     <p>For privacy questions email: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="41323431312e33350132222e33242c3828306f222e2c">[email&#160;protected]</a></p>
   </div>
 </div>
-
-<!-- DISCLAIMER MODAL -->
 
 <div class="modal-overlay" id="modal-disclaimer">
   <div class="modal-box">
