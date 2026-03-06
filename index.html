@@ -981,14 +981,22 @@ color:#8899bb;font-size:1.4rem;cursor:pointer;
   <div style="background:#0f2044;border:1px solid #162d5e;border-radius:16px;padding:36px 28px;max-width:420px;width:100%;text-align:center">
     <div style="font-size:2.8rem;margin-bottom:12px">🔒</div>
     <h2 style="font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.06em;color:#fff;margin-bottom:8px">Secure Payment</h2>
-    <p style="color:#c8d4e8;font-size:.9rem;line-height:1.6;margin-bottom:24px">Click below to pay $1.99 via Stripe. After payment, return here and click <strong style="color:#22c55e">I've Paid</strong>.</p>
+    <p style="color:#c8d4e8;font-size:.9rem;line-height:1.6;margin-bottom:16px">Step 1: Pay $1.99 via Stripe. Step 2: Return here and click <strong style="color:#22c55e">I've Paid</strong>.</p>
     <a id="stripe-pay-link" href="https://buy.stripe.com/dRmeVc4Sp9Hg39QfzM5c400" target="_blank" rel="noopener"
-      style="display:block;background:#dc1f1f;color:#fff;text-decoration:none;padding:18px 24px;border-radius:8px;font-weight:800;font-size:1rem;margin-bottom:14px;box-shadow:0 6px 24px rgba(220,31,31,.4);letter-spacing:.02em">
+      style="display:block;background:#dc1f1f;color:#fff;text-decoration:none;padding:18px 24px;border-radius:8px;font-weight:800;font-size:1rem;margin-bottom:16px;box-shadow:0 6px 24px rgba(220,31,31,.4);letter-spacing:.02em">
       💳 Pay $1.99 via Stripe →
     </a>
+    <div style="margin-bottom:12px;text-align:left">
+      <label style="display:block;font-size:.72rem;color:#8899bb;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Your Email — to receive your full results</label>
+      <input id="overlayEmail" type="email" placeholder="you@example.com"
+        style="width:100%;padding:12px;background:#0a1628;border:2px solid #162d5e;border-radius:8px;color:#fff;font-size:.9rem;box-sizing:border-box;outline:none"
+        onfocus="this.style.borderColor='#22c55e'" onblur="this.style.borderColor='#162d5e'"
+      />
+      <div id="overlayEmailErr" style="color:#ef4444;font-size:.72rem;margin-top:4px;min-height:14px"></div>
+    </div>
     <button onclick="confirmPaid()"
       style="width:100%;padding:15px;background:rgba(34,197,94,.1);border:2px solid #22c55e;border-radius:8px;color:#22c55e;font-size:.95rem;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;margin-bottom:10px;letter-spacing:.01em">
-      ✅ I've completed my payment
+      ✅ I've Paid — Show My Results
     </button>
     <button onclick="document.getElementById('pay-overlay').style.display='none'"
       style="width:100%;padding:10px;background:transparent;border:none;color:#4a5c80;font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif">
@@ -1164,18 +1172,20 @@ function showPay(){
 }
 
 function processPayment(){
+  // Save email if provided (optional — collected again in overlay)
   const emailEl=document.getElementById('userEmail');
   const emailErr=document.getElementById('emailError');
   const email=emailEl?emailEl.value.trim():'';
-  if(!email||!email.includes('@')||!email.includes('.')){
-    if(emailErr)emailErr.textContent='Please enter a valid email to receive your results.';
-    if(emailEl){emailEl.style.borderColor='#ef4444';emailEl.focus();}
-    return;
+  if(email&&(!email.includes('@')||!email.includes('.'))){
+    if(emailErr)emailErr.textContent='Please enter a valid email.';
+    if(emailEl)emailEl.style.borderColor='#ef4444';
+  } else {
+    if(emailErr)emailErr.textContent='';
+    if(emailEl)emailEl.style.borderColor='#162d5e';
+    window._iqEmail=email;
   }
-  if(emailErr)emailErr.textContent='';
-  window._iqEmail=email;
 
-  // Calculate and store results NOW while in memory
+  // Always open the overlay — never block on email
   const correct=answers.filter((a,i)=>a===Qs[i].ans).length;
   const iq=Math.round(70+(correct/20)*75);
   const cats={pattern:[],number:[],analogy:[],spatial:[]};
@@ -1195,13 +1205,27 @@ function processPayment(){
   });
   window._iqResults={email,iq,pct,p:cp('pattern'),n:cp('number'),s:cp('spatial'),a:cp('analogy'),wrong:wrong||'Perfect score!'};
 
+  // Pre-fill overlay email if already entered on payment screen
+  const oe=document.getElementById('overlayEmail');
+  if(oe&&email)oe.value=email;
   // Show overlay - Stripe link is inside it so tap opens Stripe directly
   document.getElementById('pay-overlay').style.display='flex';
 }
 
 function confirmPaid(){
+  // Get email from overlay input or fallback to payment screen input
+  const overlayEmailEl=document.getElementById('overlayEmail');
+  const overlayErr=document.getElementById('overlayEmailErr');
+  const overlayEmail=overlayEmailEl?overlayEmailEl.value.trim():'';
+  const email=overlayEmail||window._iqEmail||'';
+  if(!email||!email.includes('@')||!email.includes('.')){
+    if(overlayErr)overlayErr.textContent='Please enter your email to receive results.';
+    if(overlayEmailEl){overlayEmailEl.style.borderColor='#ef4444';overlayEmailEl.focus();}
+    return;
+  }
+  if(overlayErr)overlayErr.textContent='';
+  window._iqEmail=email;
   document.getElementById('pay-overlay').style.display='none';
-  const email=window._iqEmail||'';
 
   // Calculate results - answers still in memory!
   const correct=answers.filter((a,i)=>a===Qs[i].ans).length;
