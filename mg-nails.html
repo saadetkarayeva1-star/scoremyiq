@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MG Nails — Luxury Nail Artistry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --black:    #0a0a0a;
+  --charcoal: #1a1a1a;
+  --dark:     #111111;
+  --gold:     #ffffff;
+  --gold2:    #e0e0e0;
+  --gold3:    #cccccc;
+  --white:    #ffffff;
+  --grey:     #888;
+  --border:   rgba(255,255,255,0.15);
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  font-family:'Montserrat',sans-serif;
+  background:var(--black);
+  color:var(--white);
+  overflow-x:hidden;
+}
+
+/* ══════════════════ SCROLLBAR ══════════════════ */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--black)}
+::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px}
+
+/* ══════════════════ NAV ══════════════════ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:24px 60px;
+  transition:all 0.4s ease;
+}
+nav.scrolled{
+  background:rgba(10,10,10,0.95);
+  backdrop-filter:blur(20px);
+  padding:16px 60px;
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:28px;font-weight:300;letter-spacing:0.15em;
+  color:var(--white);text-decoration:none;
+}
+.nav-logo span{color:var(--white);font-style:italic}
+.nav-links{display:flex;gap:40px;list-style:none;align-items:center}
+.nav-links a{
+  font-size:11px;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;
+  color:rgba(255,255,255,0.7);text-decoration:none;
+  transition:color 0.3s;
+}
+.nav-links a:hover{color:var(--gold)}
+.nav-book{
+  background:var(--gold);color:var(--black) !important;
+  padding:10px 24px;font-weight:600 !important;
+  transition:background 0.3s, transform 0.2s !important;
+}
+.nav-book:hover{background:var(--gold2) !important;transform:translateY(-1px)}
+
+/* ══════════════════ HERO ══════════════════ */
+.hero{
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 40%, rgba(255,255,255,0.04) 0%, transparent 60%),
+    var(--black);
+}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size:80px 80px;
+}
+.hero-content{
+  position:relative;z-index:1;
+  text-align:center;max-width:900px;padding:0 24px;
+}
+.hero-eyebrow{
+  font-size:11px;font-weight:500;letter-spacing:0.4em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:32px;
+  display:flex;align-items:center;justify-content:center;gap:16px;
+}
+.hero-eyebrow::before,.hero-eyebrow::after{
+  content:'';display:block;width:40px;height:1px;background:var(--gold);opacity:0.5;
+}
+.hero-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(56px,9vw,120px);
+  font-weight:300;line-height:0.95;
+  letter-spacing:-0.02em;
+  margin-bottom:32px;
+}
+.hero-title em{
+  font-style:italic;color:var(--gold);
+}
+.hero-subtitle{
+  font-size:14px;font-weight:300;letter-spacing:0.12em;
+  color:rgba(255,255,255,0.6);line-height:1.8;
+  max-width:480px;margin:0 auto 56px;
+}
+.hero-cta{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--gold);color:var(--black);
+  padding:16px 40px;font-size:11px;font-weight:600;
+  letter-spacing:0.2em;text-transform:uppercase;text-decoration:none;
+  transition:all 0.3s;
+}
+.btn-primary:hover{background:var(--gold2);transform:translateY(-2px)}
+.btn-secondary{
+  display:inline-flex;align-items:center;gap:10px;
+  border:1px solid var(--border);color:var(--white);
+  padding:16px 40px;font-size:11px;font-weight:500;
+  letter-spacing:0.2em;text-transform:uppercase;text-decoration:none;
+  transition:all 0.3s;
+}
+.btn-secondary:hover{border-color:var(--gold);color:var(--gold)}
+.hero-scroll{
+  position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  font-size:10px;letter-spacing:0.3em;text-transform:uppercase;
+  color:rgba(255,255,255,0.3);
+}
+.scroll-line{
+  width:1px;height:50px;background:linear-gradient(var(--gold),transparent);
+  animation:scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse{0%,100%{opacity:0.3}50%{opacity:1}}
+
+/* ══════════════════ TICKER ══════════════════ */
+.ticker{
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  overflow:hidden;padding:18px 0;
+  background:rgba(255,255,255,0.03);
+}
+.ticker-track{
+  display:flex;gap:80px;
+  animation:ticker 30s linear infinite;
+  width:max-content;
+}
+.ticker-item{
+  font-size:11px;font-weight:500;letter-spacing:0.3em;text-transform:uppercase;
+  color:rgba(255,255,255,0.4);white-space:nowrap;
+  display:flex;align-items:center;gap:24px;
+}
+.ticker-item::after{content:'✦';color:var(--gold);font-size:8px}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ══════════════════ SECTION SHARED ══════════════════ */
+section{padding:120px 60px}
+.section-label{
+  font-size:10px;font-weight:600;letter-spacing:0.4em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:16px;
+}
+.section-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(36px,5vw,68px);font-weight:300;line-height:1.1;
+}
+.section-title em{font-style:italic;color:var(--gold)}
+
+/* ══════════════════ ABOUT ══════════════════ */
+.about{background:var(--dark)}
+.about-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:100px;align-items:center;
+  max-width:1200px;margin:0 auto;
+}
+.about-visual{position:relative}
+.about-frame{
+  aspect-ratio:4/5;
+  background:linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:96px;color:rgba(201,169,110,0.2);
+  overflow:hidden;position:relative;
+}
+.about-frame::before{
+  content:'';position:absolute;inset:12px;
+  border:1px solid rgba(255,255,255,0.08);
+}
+.about-frame::after{
+  content:'MG';
+  position:absolute;font-size:120px;font-weight:300;
+  color:rgba(255,255,255,0.06);letter-spacing:0.1em;
+}
+.about-accent{
+  position:absolute;bottom:-24px;right:-24px;
+  width:120px;height:120px;
+  background:var(--gold);opacity:0.12;
+}
+.about-text .section-label{margin-bottom:8px}
+.about-text .section-title{margin-bottom:32px}
+.about-body{
+  font-size:15px;font-weight:300;line-height:1.9;
+  color:rgba(255,255,255,0.65);margin-bottom:40px;
+}
+.about-stats{display:flex;gap:48px;margin-top:48px;padding-top:48px;border-top:1px solid var(--border)}
+.stat-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:48px;font-weight:300;color:var(--gold);line-height:1;
+}
+.stat-label{font-size:11px;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-top:6px}
+
+/* ══════════════════ SERVICES ══════════════════ */
+.services{background:var(--black)}
+.services-head{text-align:center;margin-bottom:80px}
+.services-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:2px;
+  max-width:1200px;margin:0 auto;
+}
+.service-card{
+  background:var(--charcoal);padding:48px 40px;
+  border:1px solid transparent;
+  transition:all 0.4s ease;position:relative;overflow:hidden;
+  cursor:pointer;
+}
+.service-card::before{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg, var(--gold), var(--gold2));
+  transform:scaleX(0);transform-origin:left;
+  transition:transform 0.4s ease;
+}
+.service-card:hover{border-color:var(--border);transform:translateY(-4px)}
+.service-card:hover::before{transform:scaleX(1)}
+.service-icon{
+  font-size:32px;margin-bottom:24px;display:block;
+  filter:grayscale(1) brightness(0.6);
+  transition:filter 0.3s;
+}
+.service-card:hover .service-icon{filter:none}
+.service-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:28px;font-weight:400;margin-bottom:12px;
+}
+.service-desc{
+  font-size:13px;font-weight:300;line-height:1.8;
+  color:rgba(255,255,255,0.5);margin-bottom:24px;
+}
+.service-price{
+  font-size:13px;font-weight:600;letter-spacing:0.1em;
+  color:var(--gold);
+}
+
+/* ══════════════════ GALLERY ══════════════════ */
+.gallery{background:var(--dark);padding:120px 0}
+.gallery-head{text-align:center;margin-bottom:64px;padding:0 60px}
+.gallery-grid{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  grid-template-rows:auto;
+  gap:4px;
+}
+.gallery-item{
+  background:var(--charcoal);
+  overflow:hidden;position:relative;
+  aspect-ratio:1;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+}
+.gallery-item:nth-child(1){grid-column:span 2;grid-row:span 2;aspect-ratio:1}
+.gallery-item::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));
+}
+.gallery-overlay{
+  position:absolute;inset:0;background:rgba(10,10,10,0.7);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity 0.3s;
+}
+.gallery-item:hover .gallery-overlay{opacity:1}
+.gallery-label{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:300;color:var(--white);
+  letter-spacing:0.05em;
+}
+.gallery-placeholder{
+  font-size:48px;opacity:0.12;
+  font-family:'Cormorant Garamond',serif;
+  color:var(--white);
+}
+.gallery-item:nth-child(1) .gallery-placeholder{font-size:80px}
+
+/* ══════════════════ PROCESS ══════════════════ */
+.process{background:var(--black)}
+.process-head{max-width:600px;margin-bottom:80px}
+.process-steps{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+  max-width:1200px;margin:0 auto;position:relative;
+}
+.process-steps::before{
+  content:'';position:absolute;top:28px;left:12.5%;right:12.5%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--border),var(--border),transparent);
+  z-index:0;
+}
+.step{text-align:center;padding:0 24px;position:relative;z-index:1}
+.step-num{
+  width:56px;height:56px;border:1px solid var(--border);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  margin:0 auto 24px;
+  font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;
+  color:var(--gold);background:var(--black);
+  transition:all 0.3s;
+}
+.step:hover .step-num{background:var(--gold);color:var(--black);border-color:var(--gold)}
+.step-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:400;margin-bottom:12px;
+}
+.step-desc{font-size:13px;font-weight:300;line-height:1.7;color:rgba(255,255,255,0.45)}
+
+/* ══════════════════ TESTIMONIALS ══════════════════ */
+.testimonials{background:var(--dark)}
+.testimonials-head{text-align:center;margin-bottom:80px}
+.testimonials-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+  max-width:1200px;margin:0 auto;
+}
+.testimonial-card{
+  background:var(--black);border:1px solid var(--border);
+  padding:40px;position:relative;
+}
+.testimonial-card::before{
+  content:'❝';
+  font-family:'Cormorant Garamond',serif;font-size:80px;font-weight:300;
+  color:var(--gold);opacity:0.15;
+  position:absolute;top:16px;right:24px;line-height:1;
+}
+.stars{color:var(--gold);font-size:12px;letter-spacing:2px;margin-bottom:20px}
+.testimonial-text{
+  font-family:'Cormorant Garamond',serif;
+  font-size:19px;font-weight:300;font-style:italic;
+  line-height:1.7;color:rgba(255,255,255,0.8);
+  margin-bottom:28px;
+}
+.testimonial-author{display:flex;align-items:center;gap:16px}
+.author-avatar{
+  width:44px;height:44px;border-radius:50%;
+  background:linear-gradient(135deg,#ffffff,#cccccc);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:600;color:var(--black);
+}
+.author-name{font-size:13px;font-weight:600;letter-spacing:0.05em}
+.author-tag{font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px;letter-spacing:0.05em}
+
+/* ══════════════════ BOOKING / CTA ══════════════════ */
+.booking{
+  background:var(--black);
+  text-align:center;
+  padding:160px 60px;
+  position:relative;overflow:hidden;
+}
+.booking-bg{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 70% at 50% 50%, rgba(255,255,255,0.04), transparent);
+}
+.booking-content{position:relative;z-index:1;max-width:680px;margin:0 auto}
+.booking .section-title{margin-bottom:24px}
+.booking-sub{
+  font-size:15px;font-weight:300;line-height:1.8;
+  color:rgba(255,255,255,0.55);margin-bottom:56px;
+}
+.booking-cta{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.booking-info{
+  margin-top:56px;display:flex;justify-content:center;gap:60px;flex-wrap:wrap;
+}
+.info-item{display:flex;flex-direction:column;gap:4px}
+.info-label{font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:rgba(255,255,255,0.3)}
+.info-val{font-size:14px;color:rgba(255,255,255,0.75);font-weight:300}
+
+/* ══════════════════ FOOTER ══════════════════ */
+footer{
+  background:var(--dark);
+  border-top:1px solid var(--border);
+  padding:60px;
+}
+.footer-grid{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:60px;
+  max-width:1200px;margin:0 auto 60px;
+}
+.footer-brand .nav-logo{font-size:32px;display:block;margin-bottom:16px}
+.footer-tagline{font-size:13px;font-weight:300;line-height:1.8;color:rgba(255,255,255,0.4);max-width:260px}
+.footer-col-title{font-size:10px;font-weight:600;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:24px}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:12px}
+.footer-links a{font-size:13px;font-weight:300;color:rgba(255,255,255,0.5);text-decoration:none;transition:color 0.3s}
+.footer-links a:hover{color:var(--gold)}
+.footer-bottom{
+  max-width:1200px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  padding-top:32px;border-top:1px solid rgba(255,255,255,0.06);
+}
+.footer-copy{font-size:12px;color:rgba(255,255,255,0.25);letter-spacing:0.05em}
+.footer-socials{display:flex;gap:20px}
+.social-link{
+  width:36px;height:36px;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:rgba(255,255,255,0.4);text-decoration:none;
+  transition:all 0.3s;
+}
+.social-link:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ══════════════════ ANIMATIONS ══════════════════ */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity 0.7s ease, transform 0.7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:0.1s}
+.reveal-delay-2{transition-delay:0.2s}
+.reveal-delay-3{transition-delay:0.3s}
+.reveal-delay-4{transition-delay:0.4s}
+
+/* ══════════════════ MOBILE ══════════════════ */
+@media(max-width:900px){
+  nav{padding:20px 24px}
+  nav.scrolled{padding:14px 24px}
+  .nav-links{display:none}
+  section{padding:80px 24px}
+  .about-grid{grid-template-columns:1fr;gap:48px}
+  .about-frame{aspect-ratio:16/9}
+  .services-grid{grid-template-columns:1fr}
+  .gallery-grid{grid-template-columns:1fr 1fr}
+  .gallery-item:nth-child(1){grid-column:span 2;grid-row:span 1}
+  .process-steps{grid-template-columns:1fr 1fr;gap:40px}
+  .process-steps::before{display:none}
+  .testimonials-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:40px}
+  .footer-bottom{flex-direction:column;gap:24px;text-align:center}
+  .booking-info{gap:32px}
+  .about-stats{gap:32px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ NAV ══════════════════ -->
+<nav id="nav">
+  <a href="#" class="nav-logo">MG <span>Nails</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">Story</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#testimonials">Reviews</a></li>
+    <li><a href="#booking" class="nav-book">Book Now</a></li>
+  </ul>
+</nav>
+
+<!-- ══════════════════ HERO ══════════════════ -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Luxury Nail Artistry</div>
+    <h1 class="hero-title">
+      Where Beauty<br>Meets <em>Artistry</em>
+    </h1>
+    <p class="hero-subtitle">
+      Handcrafted nail experiences designed for those who demand the finest.
+      Every detail. Every curve. Every moment — perfected.
+    </p>
+    <div class="hero-cta">
+      <a href="#booking" class="btn-primary">Book an Appointment</a>
+      <a href="#services" class="btn-secondary">Explore Services</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    Scroll
+  </div>
+</section>
+
+<!-- ══════════════════ TICKER ══════════════════ -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="ticker-item">Gel Extensions</span>
+    <span class="ticker-item">Nail Art</span>
+    <span class="ticker-item">Manicure &amp; Pedicure</span>
+    <span class="ticker-item">Acrylics</span>
+    <span class="ticker-item">Nail Repair</span>
+    <span class="ticker-item">French Tip</span>
+    <span class="ticker-item">Ombre &amp; Gradient</span>
+    <span class="ticker-item">Luxury Treatments</span>
+    <span class="ticker-item">Gel Extensions</span>
+    <span class="ticker-item">Nail Art</span>
+    <span class="ticker-item">Manicure &amp; Pedicure</span>
+    <span class="ticker-item">Acrylics</span>
+    <span class="ticker-item">Nail Repair</span>
+    <span class="ticker-item">French Tip</span>
+    <span class="ticker-item">Ombre &amp; Gradient</span>
+    <span class="ticker-item">Luxury Treatments</span>
+  </div>
+</div>
+
+<!-- ══════════════════ ABOUT ══════════════════ -->
+<section class="about" id="about">
+  <div class="about-grid">
+    <div class="about-visual reveal">
+      <div class="about-frame"></div>
+      <div class="about-accent"></div>
+    </div>
+    <div class="about-text">
+      <p class="section-label reveal">Our Story</p>
+      <h2 class="section-title reveal reveal-delay-1">
+        Crafted with<br><em>Passion &amp; Precision</em>
+      </h2>
+      <p class="about-body reveal reveal-delay-2">
+        MG Nails was born from a deep love for artistry and a belief that every
+        detail matters. We don't just paint nails — we create wearable
+        masterpieces that reflect your unique personality and style.
+      </p>
+      <p class="about-body reveal reveal-delay-2">
+        Our team of master technicians combines the latest techniques with
+        premium products, ensuring every visit is an indulgent, transformative
+        experience. From classic elegance to avant-garde nail art, we bring
+        your vision to life.
+      </p>
+      <div class="about-stats reveal reveal-delay-3">
+        <div>
+          <div class="stat-num">8+</div>
+          <div class="stat-label">Years of Excellence</div>
+        </div>
+        <div>
+          <div class="stat-num">12k</div>
+          <div class="stat-label">Happy Clients</div>
+        </div>
+        <div>
+          <div class="stat-num">100%</div>
+          <div class="stat-label">Premium Products</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ SERVICES ══════════════════ -->
+<section class="services" id="services">
+  <div class="services-head reveal">
+    <p class="section-label">What We Offer</p>
+    <h2 class="section-title">Our <em>Signature</em> Services</h2>
+  </div>
+  <div class="services-grid">
+    <div class="service-card reveal reveal-delay-1">
+      <span class="service-icon">💅</span>
+      <h3 class="service-name">Classic Manicure</h3>
+      <p class="service-desc">A timeless treatment including nail shaping, cuticle care, hand massage, and your choice of polish. Pure elegance, perfected.</p>
+      <div class="service-price">From $35</div>
+    </div>
+    <div class="service-card reveal reveal-delay-2">
+      <span class="service-icon">✨</span>
+      <h3 class="service-name">Gel Extensions</h3>
+      <p class="service-desc">Long-lasting, flawless gel extensions sculpted to your desired length and shape. Strength meets sophistication.</p>
+      <div class="service-price">From $75</div>
+    </div>
+    <div class="service-card reveal reveal-delay-3">
+      <span class="service-icon">🎨</span>
+      <h3 class="service-name">Nail Artistry</h3>
+      <p class="service-desc">Bespoke hand-painted nail art from minimalist linework to intricate masterpieces. Your nails, your canvas.</p>
+      <div class="service-price">From $50</div>
+    </div>
+    <div class="service-card reveal reveal-delay-1">
+      <span class="service-icon">🌸</span>
+      <h3 class="service-name">Luxury Pedicure</h3>
+      <p class="service-desc">A full pampering ritual: soak, scrub, mask, massage, and polish. Leave feeling completely renewed.</p>
+      <div class="service-price">From $65</div>
+    </div>
+    <div class="service-card reveal reveal-delay-2">
+      <span class="service-icon">🔮</span>
+      <h3 class="service-name">Ombre &amp; Gradient</h3>
+      <p class="service-desc">Seamless color transitions crafted with precision. From subtle nude blends to bold chromatic fades.</p>
+      <div class="service-price">From $60</div>
+    </div>
+    <div class="service-card reveal reveal-delay-3">
+      <span class="service-icon">👑</span>
+      <h3 class="service-name">VIP Package</h3>
+      <p class="service-desc">The ultimate MG experience: full gel set, nail art, luxury pedicure &amp; complimentary hand treatment. Reserve your throne.</p>
+      <div class="service-price">From $180</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ GALLERY ══════════════════ -->
+<section class="gallery" id="gallery">
+  <div class="gallery-head reveal">
+    <p class="section-label">Our Work</p>
+    <h2 class="section-title">The <em>Art</em> We Create</h2>
+  </div>
+  <div class="gallery-grid">
+    <div class="gallery-item reveal">
+      <div class="gallery-placeholder">MG</div>
+      <div class="gallery-overlay"><span class="gallery-label">Signature Collection</span></div>
+    </div>
+    <div class="gallery-item reveal reveal-delay-1">
+      <div class="gallery-placeholder">✦</div>
+      <div class="gallery-overlay"><span class="gallery-label">Minimalist Art</span></div>
+    </div>
+    <div class="gallery-item reveal reveal-delay-2">
+      <div class="gallery-placeholder">✦</div>
+      <div class="gallery-overlay"><span class="gallery-label">French Elegance</span></div>
+    </div>
+    <div class="gallery-item reveal reveal-delay-1">
+      <div class="gallery-placeholder">✦</div>
+      <div class="gallery-overlay"><span class="gallery-label">Gel Extensions</span></div>
+    </div>
+    <div class="gallery-item reveal reveal-delay-2">
+      <div class="gallery-placeholder">✦</div>
+      <div class="gallery-overlay"><span class="gallery-label">Ombre Gradient</span></div>
+    </div>
+    <div class="gallery-item reveal reveal-delay-3">
+      <div class="gallery-placeholder">✦</div>
+      <div class="gallery-overlay"><span class="gallery-label">Nail Artistry</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ PROCESS ══════════════════ -->
+<section class="process" id="process">
+  <div class="process-head reveal">
+    <p class="section-label">How It Works</p>
+    <h2 class="section-title">Your <em>Journey</em> with Us</h2>
+  </div>
+  <div class="process-steps">
+    <div class="step reveal reveal-delay-1">
+      <div class="step-num">01</div>
+      <h3 class="step-title">Book Online</h3>
+      <p class="step-desc">Choose your service and select your preferred time. Booking takes under a minute.</p>
+    </div>
+    <div class="step reveal reveal-delay-2">
+      <div class="step-num">02</div>
+      <h3 class="step-title">Consultation</h3>
+      <p class="step-desc">Arrive and share your vision. Our artists guide you through styles, shapes and colors.</p>
+    </div>
+    <div class="step reveal reveal-delay-3">
+      <div class="step-num">03</div>
+      <h3 class="step-title">Experience</h3>
+      <p class="step-desc">Sit back and relax in our serene environment while our artists work their magic.</p>
+    </div>
+    <div class="step reveal reveal-delay-4">
+      <div class="step-num">04</div>
+      <h3 class="step-title">Reveal</h3>
+      <p class="step-desc">Walk out with flawless nails and the confidence that comes with true artistry.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ TESTIMONIALS ══════════════════ -->
+<section class="testimonials" id="testimonials">
+  <div class="testimonials-head reveal">
+    <p class="section-label">Client Love</p>
+    <h2 class="section-title">What Our Clients <em>Say</em></h2>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testimonial-card reveal reveal-delay-1">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"MG Nails completely transformed how I feel about nail salons. The attention to detail is unmatched. I won't go anywhere else."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">S</div>
+        <div>
+          <div class="author-name">Sophia R.</div>
+          <div class="author-tag">Regular Client · 3 Years</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal reveal-delay-2">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"The nail art here is genuinely on another level. The artists listen, they create, and they deliver beyond what you imagined possible."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">A</div>
+        <div>
+          <div class="author-name">Alina M.</div>
+          <div class="author-tag">VIP Member</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal reveal-delay-3">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"I came in for a simple gel manicure and left with the most beautiful nails of my life. The whole experience felt genuinely luxurious."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">L</div>
+        <div>
+          <div class="author-name">Leila K.</div>
+          <div class="author-tag">New Client</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ BOOKING ══════════════════ -->
+<section class="booking" id="booking">
+  <div class="booking-bg"></div>
+  <div class="booking-content">
+    <p class="section-label reveal">Reserve Your Appointment</p>
+    <h2 class="section-title reveal reveal-delay-1">
+      Ready to be <em>Transformed?</em>
+    </h2>
+    <p class="booking-sub reveal reveal-delay-2">
+      Experience the MG Nails difference. Book your appointment today and step into a world where every detail is crafted just for you.
+    </p>
+    <div class="booking-cta reveal reveal-delay-3">
+      <a href="tel:+1234567890" class="btn-primary">Call to Book</a>
+      <a href="mailto:hello@mgnails.com" class="btn-secondary">Send a Message</a>
+    </div>
+    <div class="booking-info reveal reveal-delay-4">
+      <div class="info-item">
+        <span class="info-label">Hours</span>
+        <span class="info-val">Mon – Sat: 9am – 7pm</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Sunday</span>
+        <span class="info-val">10am – 5pm</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Phone</span>
+        <span class="info-val">(123) 456-7890</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Walk-ins</span>
+        <span class="info-val">Welcome</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="#" class="nav-logo">MG <span>Nails</span></a>
+      <p class="footer-tagline">Where every detail is a work of art. Premium nail artistry for those who appreciate the finest things.</p>
+    </div>
+    <div>
+      <p class="footer-col-title">Services</p>
+      <ul class="footer-links">
+        <li><a href="#services">Manicure</a></li>
+        <li><a href="#services">Pedicure</a></li>
+        <li><a href="#services">Gel Extensions</a></li>
+        <li><a href="#services">Nail Art</a></li>
+        <li><a href="#services">VIP Package</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-col-title">Studio</p>
+      <ul class="footer-links">
+        <li><a href="#about">Our Story</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#testimonials">Reviews</a></li>
+        <li><a href="#process">How It Works</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-col-title">Contact</p>
+      <ul class="footer-links">
+        <li><a href="tel:+1234567890">(123) 456-7890</a></li>
+        <li><a href="mailto:hello@mgnails.com">hello@mgnails.com</a></li>
+        <li><a href="#booking">Book Appointment</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 MG Nails. All rights reserved. Luxury nail artistry.</p>
+    <div class="footer-socials">
+      <a href="#" class="social-link" aria-label="Instagram">IG</a>
+      <a href="#" class="social-link" aria-label="TikTok">TK</a>
+      <a href="#" class="social-link" aria-label="Facebook">FB</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Nav scroll effect
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// Scroll reveal
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12 });
+reveals.forEach(el => observer.observe(el));
+
+// Smooth anchor scroll
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
+
+</body>
+</html>
