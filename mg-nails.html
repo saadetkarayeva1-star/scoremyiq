@@ -14,15 +14,12 @@
   --black:    #0a0a0a;
   --charcoal: #1a1a1a;
   --dark:     #111111;
-  --gold:     #c9a96e;
-  --gold2:    #e8c98a;
-  --gold3:    #f0dba8;
-  --cream:    #f5f0e8;
-  --blush:    #e8c4c0;
-  --nude:     #d4b8b0;
+  --gold:     #ffffff;
+  --gold2:    #e0e0e0;
+  --gold3:    #cccccc;
   --white:    #ffffff;
   --grey:     #888;
-  --border:   rgba(201,169,110,0.25);
+  --border:   rgba(255,255,255,0.15);
 }
 
 html{scroll-behavior:smooth}
@@ -57,7 +54,7 @@ nav.scrolled{
   font-size:28px;font-weight:300;letter-spacing:0.15em;
   color:var(--white);text-decoration:none;
 }
-.nav-logo span{color:var(--gold)}
+.nav-logo span{color:var(--white);font-style:italic}
 .nav-links{display:flex;gap:40px;list-style:none;align-items:center}
 .nav-links a{
   font-size:11px;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;
@@ -81,15 +78,14 @@ nav.scrolled{
 .hero-bg{
   position:absolute;inset:0;
   background:
-    radial-gradient(ellipse 80% 60% at 70% 40%, rgba(201,169,110,0.12) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 80% at 20% 80%, rgba(232,196,192,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse 80% 60% at 70% 40%, rgba(255,255,255,0.04) 0%, transparent 60%),
     var(--black);
 }
 .hero-grid{
   position:absolute;inset:0;
   background-image:
-    linear-gradient(rgba(201,169,110,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(201,169,110,0.04) 1px, transparent 1px);
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
   background-size:80px 80px;
 }
 .hero-content{
@@ -153,7 +149,7 @@ nav.scrolled{
   border-top:1px solid var(--border);
   border-bottom:1px solid var(--border);
   overflow:hidden;padding:18px 0;
-  background:rgba(201,169,110,0.04);
+  background:rgba(255,255,255,0.03);
 }
 .ticker-track{
   display:flex;gap:80px;
@@ -189,7 +185,7 @@ section{padding:120px 60px}
 .about-visual{position:relative}
 .about-frame{
   aspect-ratio:4/5;
-  background:linear-gradient(135deg, rgba(201,169,110,0.15), rgba(232,196,192,0.08));
+  background:linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
   border:1px solid var(--border);
   display:flex;align-items:center;justify-content:center;
   font-family:'Cormorant Garamond',serif;
@@ -198,12 +194,12 @@ section{padding:120px 60px}
 }
 .about-frame::before{
   content:'';position:absolute;inset:12px;
-  border:1px solid rgba(201,169,110,0.1);
+  border:1px solid rgba(255,255,255,0.08);
 }
 .about-frame::after{
   content:'MG';
   position:absolute;font-size:120px;font-weight:300;
-  color:rgba(201,169,110,0.08);letter-spacing:0.1em;
+  color:rgba(255,255,255,0.06);letter-spacing:0.1em;
 }
 .about-accent{
   position:absolute;bottom:-24px;right:-24px;
@@ -282,7 +278,7 @@ section{padding:120px 60px}
 .gallery-item:nth-child(1){grid-column:span 2;grid-row:span 2;aspect-ratio:1}
 .gallery-item::before{
   content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(201,169,110,0.1),rgba(232,196,192,0.05));
+  background:linear-gradient(135deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));
 }
 .gallery-overlay{
   position:absolute;inset:0;background:rgba(10,10,10,0.7);
@@ -296,9 +292,9 @@ section{padding:120px 60px}
   letter-spacing:0.05em;
 }
 .gallery-placeholder{
-  font-size:48px;opacity:0.15;
+  font-size:48px;opacity:0.12;
   font-family:'Cormorant Garamond',serif;
-  color:var(--gold);
+  color:var(--white);
 }
 .gallery-item:nth-child(1) .gallery-placeholder{font-size:80px}
 
@@ -357,7 +353,7 @@ section{padding:120px 60px}
 .testimonial-author{display:flex;align-items:center;gap:16px}
 .author-avatar{
   width:44px;height:44px;border-radius:50%;
-  background:linear-gradient(135deg,var(--gold),var(--nude));
+  background:linear-gradient(135deg,#ffffff,#cccccc);
   display:flex;align-items:center;justify-content:center;
   font-size:14px;font-weight:600;color:var(--black);
 }
@@ -373,7 +369,7 @@ section{padding:120px 60px}
 }
 .booking-bg{
   position:absolute;inset:0;
-  background:radial-gradient(ellipse 70% 70% at 50% 50%, rgba(201,169,110,0.08), transparent);
+  background:radial-gradient(ellipse 70% 70% at 50% 50%, rgba(255,255,255,0.04), transparent);
 }
 .booking-content{position:relative;z-index:1;max-width:680px;margin:0 auto}
 .booking .section-title{margin-bottom:24px}
