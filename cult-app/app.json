@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "CULT",
+    "slug": "cult-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0e0c0a"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.cult.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0e0c0a"
+      },
+      "package": "com.cult.app"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "fonts": [
+      {
+        "LibreBaskerville_400Regular": "@expo-google-fonts/libre-baskerville/LibreBaskerville_400Regular.ttf",
+        "LibreBaskerville_700Bold": "@expo-google-fonts/libre-baskerville/LibreBaskerville_700Bold.ttf",
+        "SpaceMono_400Regular": "@expo-google-fonts/space-mono/SpaceMono_400Regular.ttf"
+      }
+    ]
+  }
+}
