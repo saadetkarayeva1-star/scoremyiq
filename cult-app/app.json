@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "CULT",
+    "slug": "cult-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0e0c0a",
+    "splash": {
+      "backgroundColor": "#0e0c0a",
+      "resizeMode": "contain"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.cult.members"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0e0c0a"
+      },
+      "package": "com.cult.members"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    }
+  }
+}
